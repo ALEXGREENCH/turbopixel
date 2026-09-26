@@ -1,13 +1,13 @@
 <div class="app-container">
     <div class="ambient-field" aria-hidden="true"><canvas #ambient></canvas></div>
     <header class="app-header">
-        <div class="brand liquid-glass">
+        <div class="brand">
             <app-icon name="pixels"></app-icon>
-            <div><h1>TurboPixel</h1><span>Pixel camera</span></div>
+            <h1>TurboPixel</h1>
         </div>
-        <div class="header-actions">
-            <button class="icon-button liquid-glass" aria-label="Appearance" title="Appearance" (click)="clickAppearance()"><app-icon name="appearance"></app-icon></button>
-            <button class="icon-button liquid-glass" aria-label="About TurboPixel" title="About TurboPixel" (click)="clickAbout()"><app-icon name="info"></app-icon></button>
+        <div class="header-actions liquid-glass" role="group" aria-label="App settings">
+            <button class="icon-button" aria-label="Appearance" title="Appearance" (click)="clickAppearance()"><app-icon name="appearance"></app-icon></button>
+            <button class="icon-button" aria-label="About TurboPixel" title="About TurboPixel" (click)="clickAbout()"><app-icon name="info"></app-icon></button>
         </div>
     </header>
 
@@ -17,21 +17,22 @@
                 <div #image class="app-content-image">
                     <video #video class="app-content-video" playsinline muted aria-hidden="true"></video>
                     <canvas #canvas class="app-content-canvas" role="img" aria-label="Preview of your photo with the selected pixel effect"></canvas>
+                    <canvas #transitionCanvas class="preview-transition" aria-hidden="true"></canvas>
                     <mat-spinner diameter="32" class="app-content-spinner" *ngIf="state == State.Init"></mat-spinner>
-                    <span class="source-badge liquid-glass glass-clear"><i [class.live]="!sourceImage"></i><span>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : 'Live'}}</span></span>
                 </div>
             </div></div>
+            <div class="preview-status"><span class="source-status"><i [class.live]="!sourceImage && state === State.Work"></i>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : state === State.Error ? 'Camera unavailable' : state === State.Init ? 'Opening camera' : state === State.Work ? 'Live camera' : 'Camera paused'}}</span><span>{{selectedEffect + 1}} / {{effects.length}}</span></div>
         </section>
 
         <section class="controls-panel" aria-label="Photo controls">
             <input #photoInput type="file" accept="image/*" hidden (change)="loadPhoto($event)">
-            <div class="source-control liquid-glass" role="group" aria-label="Photo source">
+            <div class="editing-dock liquid-glass">
+            <div class="source-control" role="group" aria-label="Photo source" [class.camera-selected]="!sourceImage">
                 <button class="plain-button" [class.selected]="!!sourceImage" [attr.aria-pressed]="!!sourceImage" [disabled]="state == State.Init" (click)="photoInput.click()"><app-icon name="photo"></app-icon>Open photo</button>
                 <button class="plain-button" [class.selected]="!sourceImage" [attr.aria-pressed]="!sourceImage" [disabled]="state == State.Init" (click)="startCamera()"><app-icon name="camera"></app-icon>Camera</button>
             </div>
             <p *ngIf="importError" class="import-error" role="alert">{{importError}}</p>
-            <div class="editing-dock liquid-glass">
-                <div class="dock-heading"><span>Effect</span><span class="effect-count">{{selectedEffect + 1}} / {{effects.length}}</span></div>
+                <div class="dock-heading"><span>Palette</span></div>
                 <div class="effect-selector">
                     <button class="icon-button" aria-label="Previous effect" [disabled]="state != State.Work" (click)="clickBeforeEffect()"><app-icon name="left"></app-icon></button>
                     <button class="plain-button effect-name" [disabled]="state != State.Work" (click)="clickOpenBottomSheetEffect()" aria-haspopup="dialog"><span>{{effects[selectedEffect].title}}</span><app-icon name="down"></app-icon></button>

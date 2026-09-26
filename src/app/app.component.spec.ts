@@ -24,6 +24,36 @@ describe('Photo studio', () => {
         expect(app.selectedEffect).toBe(0);
         fixture.destroy();
     });
+    it('crossfades palette changes without putting the transition into image data', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.componentInstance;
+        spyOn(app, 'ngAfterViewInit'); fixture.detectChanges();
+        app.hasFrame = true;
+        app.appearance.still = false;
+        spyOn(window, 'matchMedia').and.returnValue({ matches: false } as MediaQueryList);
+        const transition = app.transitionCanvas.nativeElement;
+        const animate = spyOn(transition, 'animate').and.returnValue({ cancel() {} } as Animation);
+        app.changeEffect(1, .3);
+        expect(app.effectValue).toBe(.3);
+        expect(animate).toHaveBeenCalledTimes(1);
+        expect(transition.getAttribute('aria-hidden')).toBe('true');
+        app.appearance.still = true; app.hasFrame = true;
+        app.changeEffect(2);
+        expect(animate).toHaveBeenCalledTimes(1);
+        fixture.destroy();
+    });
+    it('retains dialog semantics and backdrop with custom motion durations', async () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        spyOn(fixture.componentInstance, 'ngAfterViewInit'); fixture.detectChanges();
+        fixture.componentInstance.clickAppearance(); fixture.detectChanges();
+        await fixture.whenStable();
+        const dialog = document.querySelector('[role="dialog"]')!;
+        expect(dialog).not.toBeNull();
+        expect(dialog.textContent).toContain('Appearance');
+        expect(document.querySelector('.cdk-overlay-backdrop')).not.toBeNull();
+        (dialog.querySelector('.sheet-done') as HTMLButtonElement).click();
+        fixture.destroy();
+    });
     it('styles the actual palette container in dark mode, not its overlay parent', async () => {
         const fixture = TestBed.createComponent(AppComponent);
         spyOn(fixture.componentInstance, 'ngAfterViewInit');

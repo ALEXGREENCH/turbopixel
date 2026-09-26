@@ -1,4 +1,4 @@
-# Liquid Glass adaptation — 1.4.0
+# Liquid Glass adaptation — 1.5.0
 
 This is a web interpretation of Apple's Liquid Glass design language, not the
 native Apple rendering API or an exact reproduction of its optical refraction.
@@ -9,8 +9,8 @@ The original image processing algorithms and photo-export flow remain intact.
 | Apple guidance | Application |
 | --- | --- |
 | Separate controls from content | The photo remains crisp and opaque. Floating source, editing, and navigation surfaces use glass. |
-| Regular and clear materials | Readable, tinted regular glass for controls; a dimmed clear variant for the small source badge over the image. |
-| Adapt to surrounding content | A WebGL shader refracts the photo-derived background at rounded lens edges, with RGB dispersion and directional highlights. The badge over the image samples the photo itself. |
+| Regular material | Dense regular glass protects the labels. Source status is outside the image, without another glass layer. |
+| Adapt to surrounding content | A WebGL shader refracts the photo-derived background at rounded lens edges, with restrained RGB dispersion and directional highlights. The center is protected for text contrast. |
 | Avoid glass stacked on glass | Each control group has one material surface. Child controls use simple fills. |
 | Capsule controls and concentric curves | Capsule buttons, segmented source selection, rounded slider thumb, and rounded sheets. Image corners stay square to preserve all pixels and the watermark. Main touch controls are at least 44 CSS pixels high. |
 | Immediate, restrained feedback | Press scaling, spring-like easing, slider feedback, and pointer-directed highlights. No continuously looping decorative motion. |

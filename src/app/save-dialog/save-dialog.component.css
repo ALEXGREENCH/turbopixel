@@ -6,7 +6,7 @@
 .export-actions { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 0 24px 8px; }
 .export-actions button { width: 100%; min-height: 48px; margin: 0 !important; font-size: 14px; }
 .export-secondary { background: var(--inset-fill); }
-.save-hint { padding: 0 24px 20px; color: var(--secondary); font-size: 11px; line-height: 1.5; margin: 8px 0 0; }
+.save-hint { padding: 0 24px 20px; color: var(--secondary); font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
 .status { font-size: 13px; margin: 4px 0; }
 .status:empty { display: none; }
 .error { color: var(--error); font-size: 14px; }

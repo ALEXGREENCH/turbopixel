@@ -21,7 +21,7 @@ vec3 scene(vec2 p){
   c+=texture2D(photo,t-vec2(.012,0.)).rgb*.15;
   c+=texture2D(photo,t+vec2(0.,.012)).rgb*.15;
   c+=texture2D(photo,t-vec2(0.,.012)).rgb*.15;
-  c=mix(mix(vec3(.91,.93,.96),vec3(.055,.075,.12),dark),c,mix(.46,.32,dark));
+  c=mix(mix(vec3(.94,.945,.955),vec3(.075,.08,.10),dark),c,mix(.22,.16,dark));
   vec2 imageUV=(p-preview.xy)/max(preview.zw,vec2(1.));
   if(clearGlass>.5 && min(imageUV.x,imageUV.y)>=0. && max(imageUV.x,imageUV.y)<=1.) c=texture2D(photo,imageUV).rgb;
   return c;
@@ -32,24 +32,27 @@ void main(){
   float coverage=1.-smoothstep(-.7,.7,d);
   if(coverage<=0.) discard;
   vec2 n=normalize(vec2(box(p+vec2(.5,0.))-box(p-vec2(.5,0.)),box(p+vec2(0.,.5))-box(p-vec2(0.,.5)))+vec2(.0001));
-  float bevel=min(22.,min(size.x,size.y)*.28);
+  float bevel=min(14.,min(size.x,size.y)*.23);
   float edge=1.-smoothstep(0.,bevel,-d);
   // Curved lens: inward displacement grows toward the edge; separate RGB rays.
-  float bend=sin(edge*1.570796)*24.;
+  float bend=sin(edge*1.570796)*16.;
   vec2 ray=origin+p-n*bend;
-  float dispersion=edge*2.4;
+  float dispersion=edge*1.4;
   vec3 color=vec3(scene(ray+n*dispersion).r,scene(ray).g,scene(ray-n*dispersion).b);
-  vec3 tint=mix(vec3(.97,.985,1.),vec3(.075,.10,.17),dark);
-  color=mix(color,tint,mix(.22,.34,dark)*(1.-edge*.7));
+  vec3 tint=mix(vec3(.97,.975,.985),vec3(.12,.14,.18),dark);
+  // Regular material: protect every label with a stable luminance field.
+  // Refraction is confined to the outer bevel, clear of the padded controls.
+  float body=smoothstep(3.,14.,-d);
+  color=mix(color,tint,mix(.40,.93,body));
   if(clearGlass>.5) color=mix(color,vec3(.015,.025,.045),.55);
   vec2 direction=normalize(light-(origin+p)+vec2(.001));
   float facing=dot(n,direction);
   float rim=exp(-abs(d+1.1)*1.1);
   float inner=exp(-pow((-d-bevel*.63)/3.5,2.));
-  color+=vec3(.70,.86,1.)*pow(max(facing,0.),5.)*rim*.85;
-  color+=vec3(1.,.82,.58)*pow(max(-facing,0.),7.)*rim*.35;
-  color+=vec3(.52,.72,1.)*inner*edge*.18;
-  color-=pow(max(-facing,0.),2.)*edge*.12;
+  color+=vec3(.85,.92,1.)*pow(max(facing,0.),5.)*rim*.40;
+  color+=vec3(1.,.90,.78)*pow(max(-facing,0.),7.)*rim*.10;
+  color+=vec3(.65,.78,1.)*inner*edge*.035;
+  color-=pow(max(-facing,0.),2.)*edge*.05;
   gl_FragColor=vec4(clamp(color,0.,1.),coverage);
 }`;
 
@@ -66,6 +69,7 @@ export class GlassOptics {
     private frame = 0;
     private destroyed = false;
     private pointer = [-100, -100];
+    private lightPosition?: number[];
     private readonly media = ['(prefers-reduced-transparency: reduce)', '(prefers-reduced-motion: reduce)', '(prefers-contrast: more)', '(forced-colors: active)', '(prefers-color-scheme: dark)'].map(q => matchMedia(q));
     private readonly resize = new ResizeObserver(() => this.invalidate());
     private readonly mutations = new MutationObserver(records => {
@@ -152,7 +156,11 @@ export class GlassOptics {
             const image = this.preview.getBoundingClientRect();
             gl.uniform4f(uniform('preview'), image.left, image.top, image.width, image.height);
             const pointer = this.still() || this.pointer[0] < 0 ? [innerWidth * .2, -innerHeight * .2] : this.pointer;
-            gl.uniform2f(uniform('light'), pointer[0], pointer[1]);
+            if (!this.lightPosition || this.still()) this.lightPosition = [...pointer];
+            const distance = Math.hypot(pointer[0] - this.lightPosition[0], pointer[1] - this.lightPosition[1]);
+            this.lightPosition = this.lightPosition.map((value, i) => value + (pointer[i] - value) * .24);
+            gl.uniform2f(uniform('light'), this.lightPosition[0], this.lightPosition[1]);
+            if (distance > .5 && !this.still()) this.invalidate();
             const scale = Math.min(devicePixelRatio || 1, 1.5);
             for (const [host, canvas] of this.surfaces) {
                 const rect = host.getBoundingClientRect();

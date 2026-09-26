@@ -38,10 +38,11 @@ import { iconCharForEffect } from './utils';
 @Component({
     selector: 'bottom-sheet-effects',
     template: `
+    <div class="palette-top">
     <div class="sheet-grabber" aria-hidden="true"></div>
-    <header class="sheet-header"><h2 id="palette-title">Palettes</h2><button class="plain-button sheet-done" (click)="close()">Done</button></header>
-    <p class="sheet-description">{{data.effects.length}} effects</p>
+    <header class="sheet-header"><h2 id="palette-title">Palettes <span class="sheet-count">{{data.effects.length}}</span></h2><button class="plain-button sheet-done" (click)="close()">Done</button></header>
     <label class="palette-search"><app-icon name="search"></app-icon><input type="search" placeholder="Find a palette" aria-label="Find a palette" [(ngModel)]="query"></label>
+    </div>
     <div class="palette-grid">
       <button class="palette-option plain-button" [attr.aria-pressed]="i === data.selected" (click)="openLink(i)" *ngFor="let i of filteredIndices">
         <span class="palette-swatch" aria-hidden="true"><i *ngFor="let color of colors(data.effects[i])" [style.background]="color"></i></span>
@@ -92,6 +93,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('ambient') ambient!: ElementRef<HTMLCanvasElement>;
     @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('transitionCanvas') transitionCanvas!: ElementRef<HTMLCanvasElement>;
+    private previewAnimation?: Animation;
     @ViewChild('video') video!: ElementRef<HTMLVideoElement>;
     @ViewChild('image') image!: ElementRef<HTMLElement>;
     @ViewChild('contentwrapper') contentwrapper!: ElementRef<HTMLElement>;
@@ -286,8 +289,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // <random>
     clickRandom() {
 
-        this.changeEffect(Math.floor(Math.random() * this.effects.length));
-        this.effectValue = 0.1 + Math.random() * 0.8; 
+        this.changeEffect(Math.floor(Math.random() * this.effects.length), 0.1 + Math.random() * 0.8);
     }
 
     // <about>
@@ -379,10 +381,20 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.cameraStart(CameraType.Next);
     }
 
-    changeEffect(effectIndex: number) {
+    changeEffect(effectIndex: number, value = 0.5) {
+        const overlay = this.transitionCanvas?.nativeElement;
+        const animate = overlay && this.hasFrame && !this.appearance.still && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.previewAnimation?.cancel();
+        if (animate) {
+            overlay.width = this.canvas.nativeElement.width;
+            overlay.height = this.canvas.nativeElement.height;
+            overlay.getContext('2d')!.drawImage(this.canvas.nativeElement, 0, 0);
+        }
         this.hasFrame = false;
         this.selectedEffect = effectIndex;
-        this.effectValue = 0.5;
+        this.effectValue = value;
+        if (this.state === State.Work) this.updateFrame();
+        if (animate) this.previewAnimation = overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'cubic-bezier(.2,.65,.3,1)' });
     }
 
     // mmm... some smell
@@ -499,6 +511,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.previewAnimation?.cancel();
         this.optics?.destroy();
         document.removeEventListener('visibilitychange', this.onVisibilityChange);
         this.contentwrapperResizeObserver?.disconnect();

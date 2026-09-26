@@ -1,4 +1,19 @@
-# Browser verification — 1.4.0
+# Browser verification — 1.5.0
+
+## 1.5.0 regression checks
+
+29 checks: 10 Node export tests and 19 browser checks. The new tests measure the
+actual shader's secondary-text contrast in light and dark themes on five colored
+backgrounds, verify separate, reduced-motion-aware image transitions, and retain
+dialog semantics and backdrop with custom motion durations. See
+[the design audit](DESIGN-AUDIT.md) for measurements and their limits.
+
+Manual 1.5.0 checks: 320×700 and 390×844 portrait, 844×390 landscape, and
+1280×900 desktop; no horizontal overflow. Main actions fit on the tested portrait
+screens, while short landscape pages remain scrollable. Palette search/Done stay
+visible after scrolling to the last effects. Crossfade returns to zero opacity;
+the resulting download decoded as an 880×880 PNG. In-app reduced motion hides the
+transition canvas, and reduced transparency removes both shader and backdrop blur.
 
 ## 1.4.0 regression checks
 

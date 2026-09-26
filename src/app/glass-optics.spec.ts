@@ -59,4 +59,32 @@ describe('Glass optics', () => {
         expect(host.querySelector('button')).toBe(button);
         expect(host.querySelector('canvas')).toBeNull();
     });
+    it('keeps secondary text above 4.5:1 on the rendered control body in both themes', async () => {
+        const probe = document.createElement('canvas').getContext('webgl');
+        if (!probe) { pending('WebGL unavailable on this test runner'); return; }
+        probe.getExtension('WEBGL_lose_context')?.loseContext();
+        const luminance = (rgb: number[]) => rgb.map(c => c / 255).map(c => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4).reduce((sum, c, i) => sum + c * [.2126,.7152,.0722][i], 0);
+        optics = new GlassOptics(source);
+        for (const theme of ['light', 'dark']) {
+            document.documentElement.dataset['theme'] = theme;
+            const color = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim();
+            const text = luminance([1,3,5].map(i => parseInt(color.slice(i,i+2),16)));
+            let minimum = Infinity;
+            for (const background of ['#000000','#ffffff','#ff0000','#00ff00','#0000ff']) {
+                const context = source.getContext('2d')!;
+                context.fillStyle = background; context.fillRect(0,0,64,64);
+                optics.setSource(source); await paint();
+                const lens = host.querySelector('canvas')!;
+                const scale = lens.width / 200;
+                const inset = Math.ceil(16 * scale);
+                const pixels = lens.getContext('2d')!.getImageData(inset,inset,lens.width-2*inset,lens.height-2*inset).data;
+                for (let i=0; i<pixels.length; i+=4) {
+                    const surface = luminance([pixels[i],pixels[i+1],pixels[i+2]]);
+                    minimum = Math.min(minimum,(Math.max(text,surface)+.05)/(Math.min(text,surface)+.05));
+                }
+            }
+            console.info('Glass secondary text minimum contrast (' + theme + '): ' + minimum.toFixed(2) + ':1');
+            expect(minimum).withContext(theme + ' secondary text contrast').toBeGreaterThanOrEqual(4.5);
+        }
+    });
 });

@@ -26,7 +26,7 @@ export class Appearance {
         root.dataset['still'] = String(this.still);
         document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach(meta => {
             const dark = this.theme === 'dark' || (this.theme === 'auto' && meta.media.includes('dark'));
-            meta.content = dark ? '#11151f' : '#e9edf4';
+            meta.content = dark ? '#131419' : '#f0f1f4';
         });
         try { localStorage.setItem('turbopixel-appearance', JSON.stringify({ theme: this.theme, opaque: this.opaque, still: this.still })); }
         catch { /* Appearance remains available for this session. */ }
@@ -40,7 +40,7 @@ export class Appearance {
         <header class="sheet-header"><h1 mat-dialog-title>Appearance</h1><button class="plain-button sheet-done" mat-dialog-close>Done</button></header>
         <div mat-dialog-content class="appearance-content">
             <fieldset class="theme-picker"><legend>Color theme</legend>
-                <div class="segmented-picker">
+                <div class="segmented-picker" [style.--selection]="appearance.theme === 'auto' ? 0 : appearance.theme === 'light' ? 1 : 2">
                     <button *ngFor="let theme of themes" class="plain-button" [attr.aria-pressed]="appearance.theme === theme.value" (click)="appearance.setTheme(theme.value)">{{theme.label}}</button>
                 </div>
             </fieldset>

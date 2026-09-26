@@ -6,6 +6,17 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 a Liquid Glass-inspired interface and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
+## Changes in 1.5.0
+
+- Regular glass with protected text contrast; refraction stays at the bevel.
+- One editing panel and a compact settings group, with larger palette labels.
+- A rounded mount around the complete rectangular photo, without covering pixels.
+- Short photo crossfades, moving segmented selections, restrained press feedback,
+  and sheet transitions. Reduce Motion disables these transitions.
+- Sticky palette search and dialog headers keep navigation available when scrolling.
+- Rendered shader contrast tests cover black, white, red, green, and blue backgrounds
+  in both themes. See [the design audit](doc/DESIGN-AUDIT.md).
+
 ## Changes in 1.4.0
 
 - Preserve all image corners and the watermark in the editor and export preview.
