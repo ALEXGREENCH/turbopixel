@@ -18,7 +18,7 @@
                     <video #video class="app-content-video" playsinline muted aria-hidden="true"></video>
                     <canvas #canvas class="app-content-canvas" role="img" aria-label="Preview of your photo with the selected pixel effect"></canvas>
                     <mat-spinner diameter="32" class="app-content-spinner" *ngIf="state == State.Init"></mat-spinner>
-                    <span class="source-badge liquid-glass glass-clear"><i [class.live]="!sourceImage"></i>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : 'Live'}}</span>
+                    <span class="source-badge liquid-glass glass-clear"><i [class.live]="!sourceImage"></i><span>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : 'Live'}}</span></span>
                 </div>
             </div></div>
         </section>
@@ -47,5 +47,5 @@
             </div>
         </section>
     </main>
-    <footer class="app-footer"><span>TurboPixel by <a href="https://github.com/turborium/turbopixel" target="_blank" rel="noopener">turborium</a></span><a [href]="repoLink" target="_blank" rel="noopener">Source <app-icon name="arrow"></app-icon></a></footer>
+    <footer class="app-footer"><span>TurboPixel by <a href="https://github.com/turborium/turbopixel" target="_blank" rel="noopener">turborium</a></span><button *ngIf="!install.installed" class="plain-button install-link" (click)="clickInstall()"><app-icon name="download"></app-icon>Install app</button><a [href]="repoLink" target="_blank" rel="noopener">Source <app-icon name="arrow"></app-icon></a></footer>
 </div>

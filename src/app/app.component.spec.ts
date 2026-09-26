@@ -24,4 +24,20 @@ describe('Photo studio', () => {
         expect(app.selectedEffect).toBe(0);
         fixture.destroy();
     });
+    it('styles the actual palette container in dark mode, not its overlay parent', async () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        spyOn(fixture.componentInstance, 'ngAfterViewInit');
+        fixture.detectChanges();
+        document.documentElement.dataset['theme'] = 'dark';
+        fixture.componentInstance.clickOpenBottomSheetEffect();
+        fixture.detectChanges(); await fixture.whenStable();
+        const sheet = document.querySelector('.palette-sheet .mat-bottom-sheet-container') as HTMLElement;
+        expect(sheet).not.toBeNull();
+        const style = getComputedStyle(sheet);
+        expect(style.backgroundColor).not.toBe('rgb(255, 255, 255)');
+        expect(style.color).toBe('rgb(245, 247, 255)');
+        expect(parseFloat(style.borderTopLeftRadius)).toBe(32);
+        (sheet.querySelector('.sheet-done') as HTMLButtonElement).click();
+        fixture.destroy(); delete document.documentElement.dataset['theme'];
+    });
 });

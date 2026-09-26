@@ -6,7 +6,7 @@
         <a [href]="data.repoLink" target="_blank" rel="noopener"><span>Source code<small>Independent fork by ALEXGREENCH</small></span><app-icon name="arrow"></app-icon></a>
     </div>
     <p class="about-description">Photos are processed on your device, without uploads or analytics. Original app and effects by turborium. License notices are included in the repository.</p>
-    <details><summary>Support the original creator</summary><div *ngFor="let wallet of wallets" class="wallet"><strong>{{wallet.title}}</strong><span class="selectable">{{wallet.id}}</span><button class="plain-button" (click)="copyWallet(wallet.id)">Copy</button></div></details>
+    <details><summary>Support the original creator</summary><div *ngFor="let wallet of wallets" class="wallet"><strong>{{wallet.title}}</strong><button class="plain-button" [attr.aria-label]="'Copy ' + wallet.title + ' address'" (click)="copyWallet(wallet.id)">Copy</button><code class="selectable">{{wallet.id}}</code></div></details>
     <p role="status" class="copy-status">{{copyStatus}}</p>
     <p class="version">TurboPixel {{version}}</p>
 </div>

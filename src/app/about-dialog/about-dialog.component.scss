@@ -6,8 +6,8 @@
 .about-group app-icon { height: 15px; width: 15px; color: var(--secondary); }
 .about-description { color: var(--secondary); font-size: 12px; line-height: 1.6; }
 summary { cursor: pointer; min-height: 44px; padding: 14px 0; font-size: 12px; }
-.wallet { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 8px; }
-.wallet span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.wallet button { font-size: 12px; }
+.wallet { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 10px 0 16px; border-top: 1px solid var(--line); font-size: 13px; }
+.wallet code { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; white-space: normal; font: 12px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; color: var(--secondary); }
+.wallet button { font-size: 12px; color: var(--accent); }
 .version, .copy-status { text-align: center; color: var(--secondary); font-size: 11px; }
 .copy-status:empty { display: none; }

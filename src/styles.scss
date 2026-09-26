@@ -10,7 +10,7 @@ $theme: mat.define-light-theme((color: (primary: mat.define-palette(mat.$blue-pa
  --glass: rgba(246, 249, 255, .64); --glass-top: rgba(255,255,255,.42); --glass-bottom: rgba(238,245,255,.12);
  --rim: rgba(255,255,255,.92); --lower-rim: rgba(255,255,255,.38); --glass-shadow: 0 14px 42px -15px #18345435, 0 2px 6px #1b36501a;
  --solid: #f5f7fb; --sheet: rgba(244,248,255,.87); --selected-fill: rgba(255,255,255,.67); --inset-fill: rgba(57,74,109,.075); --track: rgba(31,49,80,.18); --line: rgba(40,62,91,.13);
- --ambient-opacity: .62; --ambient-veil: linear-gradient(150deg, #f5f8ff66, #e8edf750 50%, #f8faff99);
+ --ambient-opacity: .46;
  --reflection: rgba(255,255,255,.52); --focus: #005fd9;
 }
 @mixin dark-tokens {
@@ -19,7 +19,7 @@ $theme: mat.define-light-theme((color: (primary: mat.define-palette(mat.$blue-pa
  --glass: rgba(25,32,51,.64); --glass-top: rgba(195,215,255,.16); --glass-bottom: rgba(9,16,31,.06);
  --rim: rgba(234,244,255,.36); --lower-rim: rgba(180,202,243,.1); --glass-shadow: 0 18px 50px -12px #0007, 0 2px 8px #0003;
  --solid: #242c3d; --sheet: rgba(27,35,52,.9); --selected-fill: rgba(207,226,255,.17); --inset-fill: rgba(222,235,255,.085); --track: rgba(221,232,255,.23); --line: rgba(211,227,255,.15);
- --ambient-opacity: .62; --ambient-veil: linear-gradient(155deg, #0b122b80, #08132860 45%, #111624cf);
+ --ambient-opacity: .32;
  --reflection: rgba(216,236,255,.2); --focus: #9fceff;
 }
 :root { @include light-tokens; --spring: cubic-bezier(.2,.85,.2,1.15); }
@@ -50,6 +50,13 @@ a { color: var(--accent); }
 }
 .liquid-glass::before { content: ''; pointer-events: none; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(ellipse at var(--shine-x, 10%) var(--shine-y, 0%), var(--reflection), transparent 65%); opacity: .65; }
 .liquid-glass > * { position: relative; }
+/* Shader pixels sit below the DOM controls. Text never enters the optical pass. */
+.has-optics { position: relative; }
+.has-optics > .glass-optics { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; pointer-events: none; }
+.has-optics > :not(.glass-optics) { position: relative; }
+.liquid-glass.has-optics { -webkit-backdrop-filter: none; backdrop-filter: none; }
+.liquid-glass.has-optics::before { display: none; }
+.glass-optics[hidden] { display: none; }
 .glass-clear { --glass: rgba(12,18,30,.64); --glass-top: rgba(255,255,255,.06); --glass-bottom: transparent; --rim: rgba(255,255,255,.56); --lower-rim: rgba(255,255,255,.15); color: white; -webkit-backdrop-filter: blur(9px) saturate(1.4); backdrop-filter: blur(9px) saturate(1.4); text-shadow: 0 1px 4px #0007; }
 .plain-button, .icon-button, .prominent-button { border: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: var(--text); min-height: 44px; padding: 0 14px; font-weight: 600; background: transparent; border-radius: 999px; transition: transform .28s var(--spring), background-color .2s, box-shadow .2s; }
 .icon-button { width: 44px; height: 44px; padding: 0; flex-shrink: 0; }
@@ -64,7 +71,7 @@ button:not(:disabled):active { transform: scale(.96); }
 
 /* System sheets form a denser, readable material, with nested radii. */
 .cdk-overlay-dark-backdrop { background: rgba(10,17,31,.3); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
-.glass-dialog .mat-mdc-dialog-surface, .mat-bottom-sheet-container.palette-sheet {
+.glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container {
  color: var(--text); background: linear-gradient(150deg, var(--glass-top), transparent 60%), var(--sheet) !important;
  border: 1px solid var(--rim); border-bottom-color: var(--lower-rim); border-radius: 32px !important;
  -webkit-backdrop-filter: blur(34px) saturate(1.5); backdrop-filter: blur(34px) saturate(1.5);
@@ -80,7 +87,7 @@ button:not(:disabled):active { transform: scale(.96); }
 .sheet-done { color: var(--accent); padding: 0 12px; }
 .sheet-grabber { height: 5px; width: 34px; background: var(--track); border-radius: 999px; margin: 10px auto 0; }
 .sheet-description { margin: 0 24px 18px; color: var(--secondary); font-size: 13px; line-height: 1.5; }
-.mat-bottom-sheet-container.palette-sheet { width: 650px; max-width: calc(100vw - 24px); max-height: 82dvh; margin: 0 12px max(12px, env(safe-area-inset-bottom)); padding: 0 0 22px; }
+.palette-sheet .mat-bottom-sheet-container { width: 650px; min-width: 0; max-width: calc(100vw - 24px); max-height: 82dvh; margin: 0 12px max(12px, env(safe-area-inset-bottom)); padding: 0 0 22px; }
 .palette-search { display: flex; align-items: center; gap: 9px; margin: 0 24px 20px; border-radius: 999px; padding: 0 14px; background: var(--inset-fill); }
 .palette-search app-icon { width: 18px; height: 18px; color: var(--secondary); }
 .palette-search input { min-width: 0; width: 100%; background: transparent; border: 0; color: var(--text); min-height: 46px; font-size: 16px; outline-offset: 0; }
@@ -112,7 +119,8 @@ button:not(:disabled):active { transform: scale(.96); }
 .mat-mdc-button, .mat-mdc-unelevated-button, .mat-mdc-outlined-button, .mat-mdc-raised-button { min-height: 44px; border-radius: 999px !important; letter-spacing: 0 !important; }
 
 @mixin opaque-surfaces {
- .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .mat-bottom-sheet-container.palette-sheet { background: var(--solid) !important; -webkit-backdrop-filter: none; backdrop-filter: none; border-color: var(--line); }
+ .glass-optics { display: none !important; }
+ .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container { background: var(--solid) !important; -webkit-backdrop-filter: none; backdrop-filter: none; border-color: var(--line); }
  .glass-clear { color: var(--text); text-shadow: none; }
  .liquid-glass::before { display: none; }
  .cdk-overlay-dark-backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -123,7 +131,7 @@ button:not(:disabled):active { transform: scale(.96); }
 @media (prefers-contrast: more) {
  :root { --secondary: var(--text); --line: var(--text); }
  @include opaque-surfaces;
- .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .mat-bottom-sheet-container.palette-sheet { border: 2px solid var(--text); }
+ .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container { border: 2px solid var(--text); }
 }
 @mixin still-surfaces {
  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -136,7 +144,7 @@ button:not(:disabled):active { transform: scale(.96); }
 :root[data-still=true] { @include still-surfaces; }
 @media (prefers-reduced-motion: reduce) { @include still-surfaces; }
 @media (forced-colors: active) {
- .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .mat-bottom-sheet-container.palette-sheet { background: Canvas !important; color: CanvasText; border: 1px solid ButtonText; }
+ .liquid-glass, .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container { background: Canvas !important; color: CanvasText; border: 1px solid ButtonText; }
  .prominent-button { background: Highlight; color: HighlightText; }
  .liquid-glass::before, .ambient-field { display: none; }
 }

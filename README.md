@@ -6,7 +6,17 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 a Liquid Glass-inspired interface and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
-## Liquid Glass design in 1.3.0
+## Changes in 1.4.0
+
+- Preserve all image corners and the watermark in the editor and export preview.
+- Render photographic glass with a WebGL refraction shader, chromatic dispersion,
+  and directional edge highlights. Text remains in the DOM above the effect.
+- Fix the palette sheet's actual container styles, dark-mode contrast, and mobile width.
+- Add **Install app**: a browser installation prompt when available and manual
+  Home Screen instructions for Safari and other browsers.
+- Put wallet addresses on their own full-width rows with unchanged copy payloads.
+
+## Liquid Glass design
 
 Photo-first layout with floating translucent controls, photo-derived background
 colors, specular edge highlights, capsule groups and concentric rounded corners.

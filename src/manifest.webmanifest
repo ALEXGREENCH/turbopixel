@@ -1,6 +1,8 @@
 {
   "name": "TurboPixel",
   "short_name": "TurboPixel",
+  "id": "./",
+  "description": "Pixel effects for photos and camera, with PNG export.",
   "theme_color": "#e9edf4",
   "background_color": "#e9edf4",
   "display": "standalone",

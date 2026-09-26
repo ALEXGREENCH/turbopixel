@@ -1,4 +1,17 @@
-# Browser verification — 1.3.0
+# Browser verification — 1.4.0
+
+## 1.4.0 regression checks
+
+The suite now has 26 checks (10 Node export tests and 16 browser tests). Added
+coverage compiles and renders the real WebGL shader, checks lens transparency,
+context loss/restoration and CSS fallback, verifies the actual dark palette
+container, and exercises one-shot installation prompts, cancellation and errors.
+Wallet copy verification compares the full original address with the clipboard
+payload. Native OS installation remains a device acceptance check.
+
+Manual checks cover square image corners, palette colors and horizontal bounds,
+wallet rows, installation instructions, and shader surfaces on mobile layouts.
+The shader samples the photo scene; it does not capture arbitrary DOM content.
 
 ## Automated regression coverage
 

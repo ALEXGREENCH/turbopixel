@@ -1,5 +1,5 @@
 :host { display: block; }
-.photo-preview { display: block; width: 100%; max-height: 38dvh; object-fit: contain; border-radius: 20px; image-rendering: pixelated; -webkit-user-select: auto; user-select: auto; }
+.photo-preview { display: block; width: 100%; max-height: 38dvh; object-fit: contain; border-radius: 0; image-rendering: pixelated; -webkit-user-select: auto; user-select: auto; }
 .caption-details { font-size: 12px; color: var(--secondary); border-top: 1px solid var(--line); margin-top: 16px; }
 .caption-details summary { cursor: pointer; min-height: 44px; padding: 12px 0; }
 .caption { white-space: pre-line; overflow-wrap: anywhere; margin-bottom: 0; }

@@ -1,4 +1,4 @@
-# Liquid Glass adaptation — 1.3.0
+# Liquid Glass adaptation — 1.4.0
 
 This is a web interpretation of Apple's Liquid Glass design language, not the
 native Apple rendering API or an exact reproduction of its optical refraction.
@@ -10,9 +10,9 @@ The original image processing algorithms and photo-export flow remain intact.
 | --- | --- |
 | Separate controls from content | The photo remains crisp and opaque. Floating source, editing, and navigation surfaces use glass. |
 | Regular and clear materials | Readable, tinted regular glass for controls; a dimmed clear variant for the small source badge over the image. |
-| Adapt to surrounding content | A small auxiliary canvas supplies photo colors to the blurred background. Glass uses backdrop blur, saturation, directional rims, and highlights. |
+| Adapt to surrounding content | A WebGL shader refracts the photo-derived background at rounded lens edges, with RGB dispersion and directional highlights. The badge over the image samples the photo itself. |
 | Avoid glass stacked on glass | Each control group has one material surface. Child controls use simple fills. |
-| Capsule controls and concentric curves | Capsule buttons, segmented source selection, rounded slider thumb, and nested sheet/image radii. Touch targets are at least 44 CSS pixels high. |
+| Capsule controls and concentric curves | Capsule buttons, segmented source selection, rounded slider thumb, and rounded sheets. Image corners stay square to preserve all pixels and the watermark. Main touch controls are at least 44 CSS pixels high. |
 | Immediate, restrained feedback | Press scaling, spring-like easing, slider feedback, and pointer-directed highlights. No continuously looping decorative motion. |
 | Clear hierarchy | Save photo is the prominent tinted action; secondary commands use quieter shapes and outlined local SVG icons. |
 | Sheets maintain context | Export, appearance, information, and palette sheets keep the last photo visible behind a dimmed backdrop; mobile dialogs sit near the bottom. |
@@ -27,6 +27,16 @@ the device; icons and fonts require no external service.
 Implementation: `src/styles.scss` (materials and accessibility),
 `src/app/app.component.*` (editor), `src/app/appearance.ts` (preferences),
 `src/app/icon.component.ts` (icons), and the dialog components.
+
+`src/app/glass-optics.ts` uses one WebGL context and copies the rendered lenses
+to decorative canvases beneath the controls. It samples the application's photo
+and background scene, not arbitrary DOM content. Sheets keep a denser CSS material
+for readability. Refraction is not baked into exported images.
+
+Static photos do not cause continuous shader redraws. Pointer, layout, appearance,
+and photo changes invalidate the lenses. Rendering stops while hidden, uses a
+pixel ratio capped at 1.5, and respects reduced motion/transparency preferences.
+Unavailable or lost WebGL leaves CSS glass usable; restoration rebuilds resources.
 
 ## Sources
 

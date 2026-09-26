@@ -16,7 +16,9 @@
 
 // Lasciate ogne speranza, voi ch’entrate
 
-import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener, NgZone } from '@angular/core';
+import { GlassOptics } from './glass-optics';
+import { AppInstall, InstallComponent } from './install';
 import { Appearance, AppearanceComponent } from './appearance';
 import { Camera, CameraType } from './camera';
 import { MatDialog } from '@angular/material/dialog';
@@ -187,13 +189,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     private readonly cameraFPS = 25;
     private readonly hangsTime = 1800;
+    private optics?: GlassOptics;
 
-    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance) {
+    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance, private zone: NgZone, public install: AppInstall) {
 
     }
 
     clickAppearance() {
         this.dialog.open(AppearanceComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
+    }
+    clickInstall() {
+        this.dialog.open(InstallComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
     }
 
     @HostListener('pointermove', ['$event'])
@@ -451,10 +457,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // Low-resolution color field from the actual image, beneath the glass.
         const ambient = this.ambient?.nativeElement;
         if (ambient) {
-            if (ambient.width !== 64) { ambient.width = 64; ambient.height = 64; }
-            ambient.getContext('2d')!.drawImage(this.cachedCanvas, 0, 0, 64, 64);
+            if (ambient.width !== 256) { ambient.width = 256; ambient.height = 256; }
+            ambient.getContext('2d')!.drawImage(this.cachedCanvas, 0, 0, 256, 256);
         }
         this.hasFrame = true;
+        this.zone.runOutsideAngular(() => this.optics?.setSource(this.cachedCanvas, this.sourceImage ? `${this.sourceImage.src}|${this.selectedEffect}|${this.effectValue}|${this.watermark.complete}` : undefined));
     }
 
     cameraWork() {
@@ -464,6 +471,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.zone.runOutsideAngular(() => this.optics = new GlassOptics(this.canvas.nativeElement));
         document.addEventListener('visibilitychange', this.onVisibilityChange);
 
         this.contentwrapperResizeObserver = new ResizeObserver((entries) => {
@@ -491,6 +499,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.optics?.destroy();
         document.removeEventListener('visibilitychange', this.onVisibilityChange);
         this.contentwrapperResizeObserver?.disconnect();
         clearInterval(this.timer);
