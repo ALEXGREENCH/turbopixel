@@ -1,18 +1,18 @@
-<div class="sheet-header">
-    <h1 mat-dialog-title>Your pixel photo</h1>
-    <button mat-button [disabled]="busy" [mat-dialog-close]="SaveDialogResult.Cancel">Done</button>
-</div>
+<div class="sheet-grabber" aria-hidden="true"></div>
+<header class="sheet-header">
+    <h1 mat-dialog-title>Save photo</h1>
+    <button class="plain-button sheet-done" [disabled]="busy" [mat-dialog-close]="SaveDialogResult.Cancel">Done</button>
+</header>
 <div mat-dialog-content>
     <img *ngIf="previewUrl" [src]="previewUrl" class="photo-preview" alt="Your captured photo with the selected pixel effect">
-    <p class="export-note">Full-resolution PNG · ready to keep</p>
-    <p class="caption selectable">{{data.description}}</p>
-    <button mat-button (click)="copyDescription()">Copy caption</button>
+    <p class="export-note">PNG image · original pixels, perfectly kept</p>
+    <details class="caption-details"><summary>Photo caption</summary><p class="caption selectable">{{data.description}}</p><button class="plain-button" (click)="copyDescription()"><app-icon name="copy"></app-icon>Copy caption</button></details>
     <p class="status" role="status" aria-live="polite">{{status}}</p>
     <p *ngIf="error" class="error" role="alert">{{error}}</p>
 </div>
 <div mat-dialog-actions class="export-actions">
-    <button mat-flat-button color="primary" [disabled]="!file || busy" (click)="clickSave()">Download PNG</button>
-    <button *ngIf="allowShare" mat-stroked-button [disabled]="busy" (click)="clickShare()">Share / Save to Photos</button>
-    <button *ngIf="allowCopy" mat-button [disabled]="!file || busy" (click)="clickCopy()">Copy photo</button>
+    <button class="prominent-button" [disabled]="!file || busy" (click)="clickSave()"><app-icon name="download"></app-icon>Download PNG</button>
+    <button *ngIf="allowShare" class="plain-button export-secondary" [disabled]="busy" (click)="clickShare()"><app-icon name="share"></app-icon>Share / Save to Photos</button>
+    <button *ngIf="allowCopy" class="plain-button" [disabled]="!file || busy" (click)="clickCopy()"><app-icon name="copy"></app-icon>Copy photo</button>
 </div>
 <p class="save-hint">On iPhone or iPad, choose Share to save to Photos or Files. You can also touch and hold the preview.</p>

@@ -1,4 +1,4 @@
-# Browser verification — 1.2.0
+# Browser verification — 1.3.0
 
 ## Automated regression coverage
 
@@ -10,13 +10,23 @@ clipboard rejection, attached download anchors, and delayed Blob URL cleanup
 independent of closing the preview.
 
 `npm run test:ci` additionally compiles and renders Angular components in
-ChromeHeadless. These checks do not simulate Safari's OS share sheet.
+ChromeHeadless: 10 checks cover rendering, saving, appearance preference recovery
+and persistence boundaries, and preservation of effect indices after searching.
+All 20 checks passed with the 1.3.0 production build. These checks do not simulate
+Safari's OS share sheet.
 
 ## Manual checks
 
 Chromium: desktop and 390px mobile layouts, effect navigation, export preview,
 PNG download and re-opening the PNG. Production build uses a repository-relative
 base path and generates the PWA service worker.
+
+Liquid Glass update: verified light/dark themes, persisted accessibility switches,
+computed removal of backdrop blur, reduced transition duration, searchable palette
+selection with Enter and focus restoration, and 320×700, 390×844 portrait and
+844×390 landscape layouts. At 390×844 the main controls fit without page scrolling;
+smaller/shorter layouts remain scrollable without horizontal overflow. The updated
+export sheet downloaded a PNG with a valid signature that decoded as 640×640.
 
 Real Safari/iOS, iPadOS standalone PWA, and Firefox are not available on this
 Windows workstation. The Safari fix removes the iframe and asynchronous-fetch

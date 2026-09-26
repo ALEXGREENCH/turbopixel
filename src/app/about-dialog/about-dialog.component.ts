@@ -47,6 +47,11 @@ export class AboutDialogComponent {
         });
     }
 
+    copyStatus = '';
+    async copyWallet(text: string) {
+        try { await navigator.clipboard.writeText(text); this.copyStatus = 'Address copied.'; }
+        catch { this.copyStatus = 'Could not copy. You can select the address and copy it manually.'; }
+    }
     get version(): string {
         return packageJson.version;
     }

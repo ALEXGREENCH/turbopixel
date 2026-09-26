@@ -3,8 +3,23 @@
 [Open TurboPixel](https://alexgreench.github.io/turbopixel/) · [Original by turborium](https://github.com/turborium/turbopixel)
 
 A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
-an iOS-inspired interface and a rebuilt PNG export flow. Original authorship,
+a Liquid Glass-inspired interface and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
+
+## Liquid Glass design in 1.3.0
+
+Photo-first layout with floating translucent controls, photo-derived background
+colors, specular edge highlights, capsule groups and concentric rounded corners.
+The complete flow uses one visual language: palette search, photo export,
+appearance preferences, camera errors and attribution.
+
+Appearance offers Automatic/Light/Dark themes and explicit Reduce Transparency
+and Reduce Motion settings. Device accessibility media queries and a solid
+fallback for browsers without backdrop filters are also supported. Preferences
+stay on the device. See [design mapping and verification](doc/LIQUID-GLASS.md).
+
+This is a browser implementation inspired by Apple's design guidance, not the
+native Apple Liquid Glass compositor or a claim of exact optical equivalence.
 
 ## Changes in 1.2.0
 
@@ -13,7 +28,7 @@ watermark, source history and license notices are retained.
 - Sharing and clipboard buttons use capability detection, not browser-name checks. Cancellation is silent; errors are visible and leave download available.
 - System typography, 44px or larger button targets, light/dark appearance, safe-area insets, dynamic viewport sizing, keyboard focus and reduced-motion support.
 - Open an image from Files/Photos, or start the camera explicitly. The demo scene is local SVG artwork and requires no camera access.
-- Processing stays on the device. The upstream Google Analytics tag has been removed. Material icon fonts are still loaded from Google Fonts.
+- Processing stays on the device. The upstream Google Analytics tag has been removed. Version 1.3 replaces the remote icon font with local outline SVG icons.
 
 ## Run and verify
 
@@ -33,7 +48,7 @@ See [browser verification](doc/BROWSER-TESTING.md) for test coverage and limits.
 ## Save on iPhone or iPad
 
 1. Open a photo or use Camera, then choose a palette.
-2. Tap **Keep this moment**.
+2. Tap **Save photo**.
 3. **Download PNG** saves through the browser download manager. **Share / Save to Photos** opens the system share sheet; choose Save Image or Save to Files when offered by the OS.
 4. You can also touch and hold the preview. Sharing destinations depend on the browser, operating system and installed apps.
 

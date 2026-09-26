@@ -16,7 +16,8 @@
 
 // Lasciate ogne speranza, voi ch’entrate
 
-import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener } from '@angular/core';
+import { Appearance, AppearanceComponent } from './appearance';
 import { Camera, CameraType } from './camera';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
@@ -35,20 +36,34 @@ import { iconCharForEffect } from './utils';
 @Component({
     selector: 'bottom-sheet-effects',
     template: `
-    <mat-nav-list>
-      <a mat-list-item role="button" tabindex="0" (keydown.enter)="openLink(i)" (keydown.space)="$event.preventDefault(); openLink(i)" (click)="openLink(i)" *ngFor="let effect of data.effects; index as i;">
-        <span class="appicon">{{effectIcon(effect)}} </span><span matLine>{{effect.title}}</span>
-      </a>
-    </mat-nav-list>
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <header class="sheet-header"><h2 id="palette-title">Palettes</h2><button class="plain-button sheet-done" (click)="close()">Done</button></header>
+    <p class="sheet-description">A different way to see it. {{data.effects.length}} original effects.</p>
+    <label class="palette-search"><app-icon name="search"></app-icon><input type="search" placeholder="Find a palette" aria-label="Find a palette" [(ngModel)]="query"></label>
+    <div class="palette-grid">
+      <button class="palette-option plain-button" [attr.aria-pressed]="i === data.selected" (click)="openLink(i)" *ngFor="let i of filteredIndices">
+        <span class="palette-swatch" aria-hidden="true"><i *ngFor="let color of colors(data.effects[i])" [style.background]="color"></i></span>
+        <span>{{data.effects[i].title}}</span><app-icon *ngIf="i === data.selected" name="check"></app-icon>
+      </button>
+    </div>
+    <p *ngIf="!filteredIndices.length" class="sheet-description">No palettes found. Try a different name.</p>
   `,
+
 })
 
 export class BottomSheetEffects {
     constructor(
         private bottomSheetRef: MatBottomSheetRef<BottomSheetEffects>,
-        @Inject(MAT_BOTTOM_SHEET_DATA) public data: { effects: Array<PixelEffect> }
+        @Inject(MAT_BOTTOM_SHEET_DATA) public data: { effects: Array<PixelEffect>; selected: number }
     ) { }
 
+    query = '';
+    get filteredIndices() { return this.data.effects.map((_, i) => i).filter(i => this.data.effects[i].title.toLowerCase().includes(this.query.toLowerCase().trim())); }
+    close() { this.bottomSheetRef.dismiss(); }
+    colors(effect: PixelEffect): string[] {
+        const palette = (effect as PixelEffect & { palette?: { R: number; G: number; B: number }[] }).palette;
+        return palette?.length ? palette.slice(0, 6).map(c => 'rgb(' + c.R + ',' + c.G + ',' + c.B + ')') : ['#0a84ff', '#30d158', '#ff9f0a', '#bf5af2'];
+    }
     openLink(index: number): void {
         this.bottomSheetRef.dismiss(index);
     }
@@ -73,6 +88,7 @@ enum State {
 
 export class AppComponent implements AfterViewInit, OnDestroy {
 
+    @ViewChild('ambient') ambient!: ElementRef<HTMLCanvasElement>;
     @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('video') video!: ElementRef<HTMLVideoElement>;
     @ViewChild('image') image!: ElementRef<HTMLElement>;
@@ -172,8 +188,22 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     private readonly cameraFPS = 25;
     private readonly hangsTime = 1800;
 
-    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet) {
+    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance) {
 
+    }
+
+    clickAppearance() {
+        this.dialog.open(AppearanceComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
+    }
+
+    @HostListener('pointermove', ['$event'])
+    reflectPointer(event: PointerEvent) {
+        if (event.pointerType !== 'mouse' || this.appearance.still || this.appearance.opaque || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const surface = (event.target as HTMLElement).closest<HTMLElement>('.liquid-glass');
+        if (!surface) return;
+        const bounds = surface.getBoundingClientRect();
+        surface.style.setProperty('--shine-x', ((event.clientX - bounds.left) / bounds.width * 100).toFixed(1) + '%');
+        surface.style.setProperty('--shine-y', ((event.clientY - bounds.top) / bounds.height * 100).toFixed(1) + '%');
     }
 
     // <next>
@@ -191,8 +221,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // <effects>
     clickOpenBottomSheetEffect() {
         this.bottomSheet.open(BottomSheetEffects, {
+            panelClass: 'palette-sheet',
+            ariaLabel: 'Choose a palette',
             data: {
                 effects: this.effects,
+                selected: this.selectedEffect,
             }
         })
         .afterDismissed().subscribe((result) => {
@@ -220,6 +253,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // https://stackoverflow.com/questions/68094609/ios-15-safari-floating-address-bar
         const dialogRef = this.dialog.open(SaveDialogComponent, {
             disableClose: false,
+            panelClass: 'glass-dialog',
             width: "460px",
             maxWidth: "calc(100vw - 24px)",
             maxHeight: "calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)",
@@ -257,6 +291,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // about dialog
         const dialogRef = this.dialog.open(AboutDialogComponent, {
             disableClose: false,
+            panelClass: 'glass-dialog',
             //panelClass: 'app-dialog-container',
             width: "460px",
             maxWidth: "calc(100vw - 24px)",
@@ -310,7 +345,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         .catch((error) => {
             this.state = State.Error;
             const dialogRef = this.dialog.open(CameraErrorDialogComponent, {
-                disableClose: false
+                disableClose: false, panelClass: 'glass-dialog'
             });
 
             dialogRef.afterClosed().subscribe((result) => {
@@ -326,7 +361,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     cameraStop() {
-        this.canvas.nativeElement.getContext('2d')?.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+        // Retain the last frame beneath translucent sheets.
         clearInterval(this.timer);
         this.hasFrame = false;
         this.state = State.Paused;
@@ -413,6 +448,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.canvas.nativeElement.getContext("2d")!.drawImage(
             this.cachedCanvas, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
+        // Low-resolution color field from the actual image, beneath the glass.
+        const ambient = this.ambient?.nativeElement;
+        if (ambient) {
+            if (ambient.width !== 64) { ambient.width = 64; ambient.height = 64; }
+            ambient.getContext('2d')!.drawImage(this.cachedCanvas, 0, 0, 64, 64);
+        }
         this.hasFrame = true;
     }
 

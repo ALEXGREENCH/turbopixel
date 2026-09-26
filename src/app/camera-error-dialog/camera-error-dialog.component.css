@@ -1,0 +1,2 @@
+.camera-error-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 0 20px 24px; }
+p { color: var(--secondary); font-size: 14px; line-height: 1.6; }

@@ -1,59 +1,15 @@
-<h1 mat-dialog-title>About</h1>
-<div mat-dialog-content  style="display: flex; flex-direction: column;">
-    <h4>Application Link</h4>
-    <div class="about-item">
-        <a mat-link class="about-link-item selectable" href="{{data.appLink}}" target="_blank">{{data.appLink}}</a>
-        <button mat-mini-fab 
-            (click)="copy(data.appLink, copyAppLinkTooltip)"
-            [matTooltipDisabled]="true" 
-            matTooltip="Link Has Been Copied!"
-            #copyAppLinkTooltip="matTooltip">
-                <mat-icon>content_copy</mat-icon>
-        </button>
-    </div> 
-    <h4>Original author</h4>
-    <div class="about-item">
-        <a mat-link class="about-link-item selectable" href="{{data.socLink}}" target="_blank">@Turborium</a> 
-        <button mat-mini-fab 
-            (click)="copy(data.socLink, copySocLinkTooltip)"
-            [matTooltipDisabled]="true" 
-            matTooltip="Link Has Been Copied!"
-            #copySocLinkTooltip="matTooltip">
-                <mat-icon>content_copy</mat-icon>
-        </button>
+<div class="sheet-grabber" aria-hidden="true"></div>
+<header class="sheet-header"><h1 mat-dialog-title>TurboPixel</h1><button class="plain-button sheet-done" mat-dialog-close>Done</button></header>
+<div mat-dialog-content>
+    <p class="about-intro">A different way to see the everyday.</p>
+    <div class="about-group">
+        <a [href]="data.appLink" target="_blank" rel="noopener"><span>Open TurboPixel<small>Pixel camera for your browser</small></span><app-icon name="arrow"></app-icon></a>
+        <a [href]="data.socLink" target="_blank" rel="noopener"><span>Original creator<small>Peter · @turborium</small></span><app-icon name="arrow"></app-icon></a>
+        <a [href]="data.repoLink" target="_blank" rel="noopener"><span>Source code<small>Independent fork by ALEXGREENCH</small></span><app-icon name="arrow"></app-icon></a>
     </div>
-    <h4>Source Code</h4> 
-    <div class="about-item">
-        <a mat-link class="about-link-item selectable" href="{{data.repoLink}}" target="_blank">{{data.repoLink}}</a> 
-        <button mat-mini-fab 
-            (click)="copy(data.repoLink, copyRepoLinkTooltip)"
-            [matTooltipDisabled]="true" 
-            matTooltip="Link Has Been Copied!"
-            #copyRepoLinkTooltip="matTooltip">
-                <mat-icon>content_copy</mat-icon>
-        </button>
-    </div>
-    <h4>Support</h4>
-    <div *ngFor="let wallet of wallets" class="about-item selectable">
-        {{wallet.title}}:
-        <div class="wallet-id-item selectable">{{wallet.id}}</div>
-        <button mat-mini-fab 
-            (click)="copy(wallet.id, copyWalletTooltip)"
-            [matTooltipDisabled]="true" 
-            matTooltip="Wallet Has Been Copied!"
-            #copyWalletTooltip="matTooltip">
-                <mat-icon>content_copy</mat-icon>
-        </button>
-    </div>
-    <h4>Privacy</h4>
-    <div class="about-item">
-        Photos are processed on your device. This fork does not include analytics.
-    </div>
-    <h4>Dev Info</h4>
-    <div class="about-item">
-        {{version}}
-    </div>
-</div>
-<div mat-dialog-actions style="display: flex; justify-content: center">
-    <button mat-raised-button mat-dialog-close="">Close</button>
+    <h2>Just your pixels</h2>
+    <p class="about-description">Photos are processed on your device. No uploads and no analytics. Original effects and artwork by turborium; source and license notices are included in the repository.</p>
+    <details><summary>Support the original creator</summary><div *ngFor="let wallet of wallets" class="wallet"><strong>{{wallet.title}}</strong><span class="selectable">{{wallet.id}}</span><button class="plain-button" (click)="copyWallet(wallet.id)">Copy</button></div></details>
+    <p role="status" class="copy-status">{{copyStatus}}</p>
+    <p class="version">TurboPixel {{version}}</p>
 </div>

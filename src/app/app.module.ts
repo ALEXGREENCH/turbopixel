@@ -1,3 +1,5 @@
+import { IconComponent } from './icon.component';
+import { AppearanceComponent } from './appearance';
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -26,6 +28,8 @@ import { AboutDialogComponent } from './about-dialog/about-dialog.component';
 @NgModule({
     declarations: [
         AppComponent,
+        IconComponent,
+        AppearanceComponent,
         CameraErrorDialogComponent,
         BottomSheetEffects,
         SaveDialogComponent,
