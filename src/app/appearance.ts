@@ -39,7 +39,6 @@ export class Appearance {
         <div class="sheet-grabber" aria-hidden="true"></div>
         <header class="sheet-header"><h1 mat-dialog-title>Appearance</h1><button class="plain-button sheet-done" mat-dialog-close>Done</button></header>
         <div mat-dialog-content class="appearance-content">
-            <p class="sheet-description">Make yourself comfortable.</p>
             <fieldset class="theme-picker"><legend>Color theme</legend>
                 <div class="segmented-picker">
                     <button *ngFor="let theme of themes" class="plain-button" [attr.aria-pressed]="appearance.theme === theme.value" (click)="appearance.setTheme(theme.value)">{{theme.label}}</button>

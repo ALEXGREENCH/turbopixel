@@ -1,14 +1,11 @@
 <div class="sheet-grabber" aria-hidden="true"></div>
 <header class="sheet-header"><h1 mat-dialog-title>TurboPixel</h1><button class="plain-button sheet-done" mat-dialog-close>Done</button></header>
 <div mat-dialog-content>
-    <p class="about-intro">A different way to see the everyday.</p>
     <div class="about-group">
-        <a [href]="data.appLink" target="_blank" rel="noopener"><span>Open TurboPixel<small>Pixel camera for your browser</small></span><app-icon name="arrow"></app-icon></a>
         <a [href]="data.socLink" target="_blank" rel="noopener"><span>Original creator<small>Peter · @turborium</small></span><app-icon name="arrow"></app-icon></a>
         <a [href]="data.repoLink" target="_blank" rel="noopener"><span>Source code<small>Independent fork by ALEXGREENCH</small></span><app-icon name="arrow"></app-icon></a>
     </div>
-    <h2>Just your pixels</h2>
-    <p class="about-description">Photos are processed on your device. No uploads and no analytics. Original effects and artwork by turborium; source and license notices are included in the repository.</p>
+    <p class="about-description">Photos are processed on your device, without uploads or analytics. Original app and effects by turborium. License notices are included in the repository.</p>
     <details><summary>Support the original creator</summary><div *ngFor="let wallet of wallets" class="wallet"><strong>{{wallet.title}}</strong><span class="selectable">{{wallet.id}}</span><button class="plain-button" (click)="copyWallet(wallet.id)">Copy</button></div></details>
     <p role="status" class="copy-status">{{copyStatus}}</p>
     <p class="version">TurboPixel {{version}}</p>

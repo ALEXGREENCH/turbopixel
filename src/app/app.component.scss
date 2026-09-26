@@ -20,9 +20,6 @@
 .source-badge { position: absolute; top: 18px; left: 18px; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 999px; font-size: 11px; font-weight: 650; }
 .source-badge i { display: block; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
 .source-badge i.live { background: #ff453a; }
-.photo-caption { text-align: center; padding-top: 23px; }
-.photo-caption h2 { margin: 0; font-size: clamp(22px, 2.7vw, 32px); font-weight: 650; letter-spacing: -1px; }
-.photo-caption p { color: var(--secondary); margin: 6px 0 0; font-size: 13px; }
 .controls-panel { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
 .source-control { display: grid; grid-template-columns: 1fr 1fr; padding: 5px; border-radius: 999px; }
 .source-control button { gap: 8px; min-height: 47px; font-size: 13px; border-radius: 999px; }
@@ -49,7 +46,6 @@
 .dock-actions { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
 .shuffle-button { background: var(--inset-fill); }
 .capture-button { flex: 1; min-width: 0; min-height: 50px; border-radius: 999px; font-size: 14px; }
-.privacy-note { font-size: 11px; text-align: center; color: var(--secondary); margin: -2px 0 0; }
 .import-error { color: var(--error); font-size: 13px; margin: 0; padding: 12px; background: var(--solid); border-radius: 18px; }
 .app-footer { display: flex; justify-content: space-between; gap: 12px; padding: 0 max(32px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(32px, env(safe-area-inset-left)); color: var(--secondary); font-size: 11px; }
 .app-footer a { color: inherit; text-decoration: none; display: inline-flex; gap: 4px; align-items: center; min-height: 24px; }
@@ -69,12 +65,9 @@
  .header-actions button { width: 46px; height: 46px; }
  .studio { display: flex; flex-direction: column; gap: 14px; padding: 8px max(18px, env(safe-area-inset-right)) 16px max(18px, env(safe-area-inset-left)); width: 100%; }
  .preview-panel { width: 100%; }
- .app-content { height: clamp(210px, calc(100dvh - 525px), 430px); min-height: 210px; }
+ .app-content { height: clamp(210px, calc(100dvh - 450px), 430px); min-height: 210px; }
  .app-content-image { border-radius: 28px; }
  .source-badge { top: 14px; left: 14px; }
- .photo-caption { padding-top: 13px; }
- .photo-caption h2 { font-size: 21px; letter-spacing: -.6px; }
- .photo-caption p { font-size: 11px; margin-top: 4px; }
  .controls-panel { width: min(100%, 420px); gap: 10px; }
  .source-control { width: min(100%, 294px); align-self: center; }
  .source-control button { min-height: 44px; }
@@ -84,7 +77,6 @@
  .effect-name { justify-content: center; gap: 9px; }
  .intensity-heading { margin-top: 12px; }
  .dock-actions { margin-top: 5px; }
- .privacy-note { font-size: 10px; margin-top: 0; }
  .app-footer { padding-inline: 20px; font-size: 10px; }
 }
 @media (max-width: 380px) {
@@ -98,8 +90,7 @@
  .app-header { padding-top: 12px; }
  .studio { padding-top: 2px; padding-bottom: 12px; gap: 28px; }
  .app-content { min-height: 220px; height: 65dvh; }
- .photo-caption { padding-top: 10px; }
- .photo-caption p, .dock-heading, .privacy-note { display: none; }
+ .dock-heading { display: none; }
  .controls-panel { gap: 10px; }
  .editing-dock { padding-top: 16px; }
  .dock-actions { margin-top: 8px; }

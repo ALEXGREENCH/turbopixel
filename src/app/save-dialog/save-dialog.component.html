@@ -5,7 +5,6 @@
 </header>
 <div mat-dialog-content>
     <img *ngIf="previewUrl" [src]="previewUrl" class="photo-preview" alt="Your captured photo with the selected pixel effect">
-    <p class="export-note">PNG image · original pixels, perfectly kept</p>
     <details class="caption-details"><summary>Photo caption</summary><p class="caption selectable">{{data.description}}</p><button class="plain-button" (click)="copyDescription()"><app-icon name="copy"></app-icon>Copy caption</button></details>
     <p class="status" role="status" aria-live="polite">{{status}}</p>
     <p *ngIf="error" class="error" role="alert">{{error}}</p>

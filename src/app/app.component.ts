@@ -38,7 +38,7 @@ import { iconCharForEffect } from './utils';
     template: `
     <div class="sheet-grabber" aria-hidden="true"></div>
     <header class="sheet-header"><h2 id="palette-title">Palettes</h2><button class="plain-button sheet-done" (click)="close()">Done</button></header>
-    <p class="sheet-description">A different way to see it. {{data.effects.length}} original effects.</p>
+    <p class="sheet-description">{{data.effects.length}} effects</p>
     <label class="palette-search"><app-icon name="search"></app-icon><input type="search" placeholder="Find a palette" aria-label="Find a palette" [(ngModel)]="query"></label>
     <div class="palette-grid">
       <button class="palette-option plain-button" [attr.aria-pressed]="i === data.selected" (click)="openLink(i)" *ngFor="let i of filteredIndices">
@@ -501,4 +501,3 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return iconCharForEffect(effect);
     }
 }
-
