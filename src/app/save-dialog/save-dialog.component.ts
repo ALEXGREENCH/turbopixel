@@ -1,144 +1,68 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
-import { ViewChild } from '@angular/core';
+import { preparePng, downloadFile, canShareFile } from './photo-export';
 
-export enum SaveDialogResult {
-    Cancel,
-    Download,
-    Share,
-    Copy,
-};
+export enum SaveDialogResult { Cancel, Download, Share, Copy }
+export interface SaveDialogData { imageUrl: string; fileName: string; description: string; }
 
-export interface SaveDialogData {
-    imageUrl: string;
-    fileName: string;
-    description: string;
-};
-
-
-
-@Component({
-    selector: 'app-save-dialog',
-    templateUrl: './save-dialog.component.html',
-    styleUrls: ['./save-dialog.component.css']
-})
-export class SaveDialogComponent implements OnDestroy  {
-
-    @ViewChild("copyTooltip") copyTooltip!: MatTooltip;
-
-    shareIframe!: HTMLIFrameElement;
- 
+@Component({ selector: 'app-save-dialog', templateUrl: './save-dialog.component.html', styleUrls: ['./save-dialog.component.css'] })
+export class SaveDialogComponent implements OnDestroy {
+    readonly SaveDialogResult = SaveDialogResult;
+    file?: File;
+    previewUrl = '';
+    busy = false;
+    status = '';
+    error = '';
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: SaveDialogData) {
-        
-
-
-        // WHY USED IFRAME FOR SHARE?
-        // SEE THIS: 
-        // https://stackoverflow.com/questions/64055853/navigator-share-only-working-once-in-ios-second-click-throws-error-request-is
-        // https://developer.apple.com/forums/thread/662629
-        // WEB IS AWESOME TECHNOLOGY
-        let iframeBlob = new Blob(['<!DOCTYPE html><html>'], {type: "text/html"});
-        this.shareIframe = document.createElement("iframe");
-        this.shareIframe.src = URL.createObjectURL(iframeBlob);
-        this.shareIframe.style.display = "none";
-        document.documentElement.appendChild(this.shareIframe);
-    }
-
-    ngOnDestroy() {
-        // I'm not sure but I hope it works well
-        document.documentElement.removeChild(this.shareIframe);
-    }
-
-    SaveDialogResult = SaveDialogResult;
-
-    get allowCopy(): boolean {
-        return !navigator.userAgent.toLowerCase().includes('firefox');
-    }
-
-    get allowShare(): boolean {
-        return navigator.userAgent.toLowerCase().includes('safari') ||
-            navigator.userAgent.toLowerCase().includes('chrome');
-    }
-
-    async copyDescription() {
-        await navigator.clipboard.writeText(this.data.description);
-
-        this.copyTooltip.disabled = false;
-        this.copyTooltip.show()
-        setTimeout(() => {
-            this.copyTooltip.disabled = true;
-        }, 1000);
-    }
-
-    async clickSave() {
-        // YES, BROWSWER API HASN'T SAVE FILE API 
-        let link = document.createElement('a');
-        link.download = this.data.fileName;
-        link.href = this.data.imageUrl;
-        link.click();
-    }
-
-    async clickCopy() {
-        if (navigator.userAgent.toLowerCase().includes('chrome')) {
-            // good, but not work in chrome
-            let response = await fetch(this.data.imageUrl);
-            let blob = await response.blob();
-            navigator.clipboard.write([
-                new ClipboardItem({ 'image/png': blob })
-            ]);
-        } else if (navigator.userAgent.toLowerCase().includes('safari')) {
-            // workaround for safari
-            let makeImagePromise = async () => {
-                let response = await fetch(this.data.imageUrl);
-                return await response.blob();
-            }
-            navigator.clipboard.write([
-                new ClipboardItem({
-                    "image/png": makeImagePromise(),
-                }),
-            ]);
-        } else {
-            // bad code
-            let image = document.createElement('img');
-            image.src = this.data.imageUrl;
-            let div = document.createElement('div');
-            div.contentEditable = 'true';
-            div.appendChild(image);
-            document.body.appendChild(div);
-            try {
-                div.focus();
-                window.getSelection()!.selectAllChildren(div);
-                document.execCommand('Copy');// HACK
-            }
-            finally {
-                document.body.removeChild(div);
-            }
-        }
-    }
-
-    async clickShare() {
-        let response = await fetch(this.data.imageUrl);
-        let blob = await response.blob();
-        let file = new File([blob], this.data.fileName, {
-            type: blob.type,
-            lastModified: new Date().getTime(),
-        });
-
+        // Prepare before the next user gesture, without awaiting a fetch in the
+        // share/clipboard handler. Safari needs the original user activation.
         try {
-            await this.shareIframe.contentWindow!.navigator.share({
-                files: [file],
-            });
-            this.shareIframe.contentWindow!.location.reload(); 
-        } 
-        catch(error) {
-            console.log(error);
-        } 
-        finally {
-            // see links above
-            this.shareIframe.contentWindow!.location.reload();
+            this.file = preparePng(data.imageUrl, data.fileName);
+            this.previewUrl = URL.createObjectURL(this.file);
+        } catch {
+            this.error = 'This photo could not be prepared. Close this sheet and take another photo.';
         }
     }
+    get allowCopy(): boolean { return !!navigator.clipboard?.write && typeof ClipboardItem !== 'undefined'; }
+    get allowShare(): boolean { return !!this.file && canShareFile(this.file); }
+    async copyDescription() {
+        this.error = '';
+        try {
+            await navigator.clipboard.writeText(this.data.description);
+            this.status = 'Caption copied.';
+        } catch { this.error = 'Could not copy the caption. You can select and copy the text below.'; }
+    }
+    clickSave() {
+        if (!this.file || this.busy) return;
+        this.error = '';
+        try {
+            downloadFile(this.file);
+            this.status = 'Download requested. Check your browser’s Downloads or the Files app.';
+        } catch { this.error = 'Could not start the download. Try Share or touch and hold the photo.'; }
+    }
+    async clickCopy() {
+        if (!this.file || this.busy || !this.allowCopy) return;
+        this.busy = true;
+        this.error = '';
+        try {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': this.file })]);
+            this.status = 'Photo copied.';
+        } catch { this.error = 'Clipboard access is unavailable. Download or share the PNG instead.'; }
+        finally { this.busy = false; }
+    }
+    async clickShare() {
+        if (!this.file || this.busy || !this.allowShare) return;
+        this.busy = true;
+        this.error = '';
+        this.status = '';
+        try {
+            // Top-level navigator, called directly from the click handler.
+            await navigator.share({ files: [this.file] });
+            this.status = 'Photo shared.';
+        } catch (error) {
+            if ((error as { name?: string })?.name !== 'AbortError') this.error = 'Sharing is unavailable right now. Try Download PNG instead.';
+        } finally { this.busy = false; }
+    }
+    ngOnDestroy() { if (this.previewUrl) URL.revokeObjectURL(this.previewUrl); }
 }

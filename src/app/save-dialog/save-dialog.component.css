@@ -1,0 +1,10 @@
+.sheet-header { display: flex; align-items: center; justify-content: space-between; padding-right: 12px; }
+.sheet-header h1 { margin: 0; font-size: 22px; letter-spacing: -.6px; }
+.photo-preview { display: block; width: 100%; max-height: 40dvh; object-fit: contain; border-radius: 16px; image-rendering: pixelated; -webkit-user-select: auto; user-select: auto; }
+.export-note { text-align: center; font-size: 13px; color: var(--muted); margin: 12px 0; }
+.caption { white-space: pre-line; font-size: 13px; overflow-wrap: anywhere; margin-bottom: 0; }
+.export-actions { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 0 24px 8px; }
+.export-actions button { width: 100%; min-height: 48px; }
+.save-hint { padding: 0 24px 20px; color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
+.status { font-size: 13px; margin: 4px 0; }
+.error { color: var(--error); font-size: 14px; }

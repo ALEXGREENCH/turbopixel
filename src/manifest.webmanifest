@@ -1,8 +1,8 @@
 {
   "name": "TurboPixel",
   "short_name": "TurboPixel",
-  "theme_color": "#FF5E00",
-  "background_color": "#111111",
+  "theme_color": "#f2f3ee",
+  "background_color": "#f2f3ee",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

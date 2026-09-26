@@ -1,23 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AppModule } from '../app.module';
 import { CameraErrorDialogComponent } from './camera-error-dialog.component';
-
 describe('CameraErrorDialogComponent', () => {
-    let component: CameraErrorDialogComponent;
-    let fixture: ComponentFixture<CameraErrorDialogComponent>;
-
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [CameraErrorDialogComponent]
-        })
-            .compileComponents();
-
-        fixture = TestBed.createComponent(CameraErrorDialogComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+ it('renders its accessible dialog content', async () => {
+  await TestBed.configureTestingModule({ imports: [AppModule], providers: [
+   { provide: MAT_DIALOG_DATA, useValue: { appLink: '/', repoLink: '/', socLink: '/' } },
+   { provide: MatDialogRef, useValue: { close() {} } }
+  ] }).compileComponents();
+  const fixture = TestBed.createComponent(CameraErrorDialogComponent);
+  fixture.detectChanges();
+  expect(fixture.nativeElement.querySelector('h1')).not.toBeNull();
+  fixture.destroy();
+ });
 });

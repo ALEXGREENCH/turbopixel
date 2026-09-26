@@ -1,134 +1,54 @@
-@use 'sass:map';
-@use '@angular/material' as mat;
-@use "@material/slider/styles";
-
-.app-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    /*outline: 1px solid rgb(51, 255, 0);
-    outline-offset: -2.5px ;*/
-}
-
-.app-header {
-    /*opacity: 0.5;*/
-}
-
-.app-footer {
-    /*opacity: 0.5;*/
-}
-
-.app-content {
-    overflow: auto;
-    flex-grow: 1;
-    /*width: 100%;
-    height: 100%;*/
-    opacity: 1;
-}
-
-.app-content-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    /* vertical by default*/
-    display: flex;
-    flex-direction: row;
-    /* center */
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.app-content-image {
-    /* vertical by default*/
-    width: 100%;
-    aspect-ratio: 1/1;
-    /* + size */
-    flex-grow: 1;
-    position: relative;
-    display: flex;
-    /* center */
-    /*align-items: center; 
-    justify-content: center; 
-    text-align: center;*/
-    /* debug */
-    background-color: black;
-    opacity: 1;
-    outline: 1px solid red;
-    outline-offset: -2.5px;
-}
-
-.app-content-video {
-    background-color: black;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-}
-
-.app-content-canvas {
-    opacity: 1;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    top: 0;
-    left: 0;
-}
-
-.app-content-spinner {
-    margin: auto;
-}
-
-.app-toolbar-center {
-    width: 100%;
-    display: grid;
-    grid-auto-flow: column;
-    justify-content: center;
-    align-items: center;
-    /*overflow-x: auto; ??? */
-    gap: 8px;
-}
-
-.app-toolbar-flex {
-    display: flex;
-    flex-direction: column;
-}
-
-.app-toolbar-bottom-fix {
-    height: 16px;
-}
-
-.app-button-select-effect {
-    width: 100px;
-}
-
-// https://css-tricks.com/sliding-nightmare-understanding-range-input/
-// https://stackoverflow.com/questions/75609221/styling-the-angular-material-15-slider
-// https://stackoverflow.com/questions/30102792/css-media-query-to-target-only-ios-devices
-
-.app-slider-effect {
-    // old workaround without css hack, but has bug
-    // min-width: calc((100% * 0.666) - 16px);
-    // transform: scale(1.5);
-    min-width: calc(100% - 32px);
-    --mdc-slider-active-track-color: transparent;
-}
-
-// ULTRA BEZUMIE, спрашивать на стриме.
-// FIX: too difficult change range/track bar on iOS
-@supports (-webkit-touch-callout: none) {
-    .app-slider-effect ::-webkit-slider-runnable-track {
-        margin-left: -35px;
-        margin-right: -35px;
-    }
-
-    .app-slider-effect ::-webkit-slider-thumb {
-        width: 70px;
-        height: 70px;
-    }
+:host { display: block; height: 100%; }
+.app-container { min-height: 100%; display: flex; flex-direction: column; max-width: 1440px; margin: auto; padding: 0 max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left)); }
+.app-header { display: flex; align-items: center; justify-content: space-between; padding: max(24px, env(safe-area-inset-top)) 0 24px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { display: grid; place-items: center; background: var(--accent); color: white; border-radius: 14px; width: 46px; height: 46px; font-size: 34px; }
+h1 { font-size: 23px; letter-spacing: -.8px; font-weight: 750; line-height: 1.1; margin: 0; }
+.brand-caption { font-size: 12px; color: var(--muted); }
+.studio { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr); gap: 24px; flex: 1; align-items: stretch; }
+.preview-panel { min-width: 0; display: flex; flex-direction: column; border-radius: 28px; padding: 24px; background: var(--preview-bg); color: #f7f8f5; }
+.preview-heading, .preview-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 1.7px; display: flex; align-items: center; gap: 7px; }
+.eyebrow i { width: 6px; height: 6px; background: #a9dab2; border-radius: 50%; }
+.preview-tag { color: #d1d9cd; font-size: 11px; padding: 5px 10px; border: 1px solid #ffffff30; border-radius: 20px; }
+.app-content { flex: 1; min-height: 250px; height: min(58vh, 640px); padding: 24px 0; }
+.app-content-wrapper { display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; }
+.app-content-image { position: relative; max-width: 100%; max-height: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 12px; background: #172019; }
+.app-content-video, .app-content-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.app-content-spinner { position: absolute; top: calc(50% - 18px); left: calc(50% - 18px); }
+.preview-footer { font-size: 11px; color: #c5cfc4; }
+.controls-panel { padding: 32px; border-radius: 28px; background: var(--surface); display: flex; flex-direction: column; justify-content: center; }
+.control-intro .eyebrow { color: var(--accent); }
+h2 { font-size: clamp(27px, 2.7vw, 40px); line-height: 1.12; letter-spacing: -1.4px; font-weight: 650; margin: 18px 0 14px; }
+.control-intro p { font-size: 13px; color: var(--muted); margin: 0 0 26px; }
+.source-control { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.source-control button { min-height: 46px; padding: 0 12px; }
+.control-group { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 24px 0; margin-top: 26px; }
+.section-label { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--muted); letter-spacing: 1.4px; font-weight: 650; }
+.section-label span { letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.effect-selector { display: flex; align-items: center; background: var(--well); border-radius: 14px; margin-top: 12px; }
+.effect-name { flex: 1; min-width: 0; font-size: 13px; }
+.intensity-label { margin-top: 24px; }
+.intensity-slider { width: 100%; margin: 4px 0 0; min-height: 44px; accent-color: var(--accent); cursor: pointer; }
+.range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.secondary-actions { display: flex; justify-content: center; margin: 10px 0 20px; }
+.capture-button { min-height: 54px; font-size: 15px; }
+.privacy-note { text-align: center; color: var(--muted); font-size: 11px; margin: 12px 0 0; }
+.import-error { color: var(--error); font-size: 13px; }
+.app-footer { display: flex; justify-content: space-between; padding: 22px 0 max(22px, env(safe-area-inset-bottom)); color: var(--muted); font-size: 11px; }
+a { color: inherit; text-underline-offset: 3px; }
+@media (min-width: 1500px) { .app-container { max-width: 1280px; } }
+@media (max-width: 760px) {
+ .app-container { padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); }
+ .app-header { padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: 16px; }
+ .brand-caption { display: none; }
+ .studio { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+ .preview-panel { padding: 16px; border-radius: 22px; }
+ .app-content { height: 36dvh; min-height: 220px; flex: auto; padding: 14px 0; }
+ .preview-footer { font-size: 10px; }
+ .controls-panel { padding: 20px; border-radius: 22px; }
+ .control-intro { display: none; }
+ .control-group { margin-top: 18px; padding: 18px 0; }
+ .secondary-actions { margin: 4px 0 8px; }
+ .app-footer { gap: 12px; }
 }

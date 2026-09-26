@@ -1,87 +1,54 @@
-# TurboPixel
-TurboPixel Angular PWA Application
+# TurboPixel — modern browser edition
 
-TurboPixel is PWA Application for creating amazing PixelArt-like photos.  
-Over 30 effects, advanced settings and export formats.  
-Enjoy!  
+[Open TurboPixel](https://alexgreench.github.io/turbopixel/) · [Original by turborium](https://github.com/turborium/turbopixel)
 
-# [GDD](https://github.com/turborium/GDD) G-Code Driven Development  
+A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
+an iOS-inspired interface and a rebuilt PNG export flow. Original authorship,
+watermark, source history and license notices are retained.
 
-![1](doc/1.PNG)  
-![2](doc/2.PNG)  
-![3](doc/3.PNG) 
+## Changes in 1.2.0
 
-### Check this: https://turborium.github.io/turbopixel/
+- PNG download uses an attached anchor and a Blob URL retained long enough for Safari to consume it, even after the export sheet closes.
+- Share uses the top-level navigator directly from the user gesture. The PNG File is prepared before the click; the old hidden-iframe workaround is removed.
+- Sharing and clipboard buttons use capability detection, not browser-name checks. Cancellation is silent; errors are visible and leave download available.
+- System typography, 44px or larger button targets, light/dark appearance, safe-area insets, dynamic viewport sizing, keyboard focus and reduced-motion support.
+- Open an image from Files/Photos, or start the camera explicitly. The demo scene is local SVG artwork and requires no camera access.
+- Processing stays on the device. The upstream Google Analytics tag has been removed. Material icon fonts are still loaded from Google Fonts.
 
-# License
-TurboPixel licensed under Apache 2.0 license, see LICENSE.  
-Part of files licensed under MPL1.1, see license notice in each of file.  
-If the "source" file does not have a license notice, Apache 2.0 is used by default.  
+## Run and verify
 
-# Project
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.5.
+Node.js 22 is used in CI. Install dependencies with `npm ci`.
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+```sh
+npm start
+npm run test:export
+npm run test:ci
+npm run build -- --base-href /turbopixel/
+```
 
-## Code scaffolding
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+`test:ci` also runs Angular rendering tests in ChromeHeadless. On Windows, set
+`CHROME_BIN` to the installed Chrome executable if it is not found automatically.
+See [browser verification](doc/BROWSER-TESTING.md) for test coverage and limits.
 
-## Build
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Save on iPhone or iPad
 
-## Running unit tests
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1. Open a photo or use Camera, then choose a palette.
+2. Tap **Keep this moment**.
+3. **Download PNG** saves through the browser download manager. **Share / Save to Photos** opens the system share sheet; choose Save Image or Save to Files when offered by the OS.
+4. You can also touch and hold the preview. Sharing destinations depend on the browser, operating system and installed apps.
 
-## Running end-to-end tests
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## GitHub Pages
 
-## Further help
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+The workflow in `.github/workflows/webpack.yml` tests and builds on pushes to
+`main`, then publishes the build using GitHub Pages. Set the repository's Pages
+source to **GitHub Actions**. Pull requests run checks without deploying.
 
-# SETUP
+## License and attribution
 
-### set up Angular
-https://angular.io/guide/setup-local
-`npm install -g @angular/cli`
+TurboPixel is by Peter (@turborium). The original Apache-2.0 LICENSE and all
+per-file MPL notices are preserved. Some source files use MPL-1.1; the original
+app component declares MPL-2.0. This fork modifies the application shell and
+export code; camera, pixelator and effects retain their original notices.
 
-### new project
-`ng new <name>`
-`cd <name>`
-
-### run
-`ng serve --open`
-
-### install Material Design
-https://material.angular.io/guide/getting-started
-`ng add @angular/material`
-open index.html
-change `<body class="mat-typography">` to `<body class="mat-typography mat-app-background">`
-
-## ngrok
-ngrok http 4200 --host-header="localhost:8080"
-
-## After clear
-`npm install`
-
-## PWA
-https://web.dev/creating-pwa-with-angular-cli/  
-`ng add @angular/pwa`
-`cd dist/<projname>`
-`npm i -g http-server`
-``
-add this to "package.json":
-`ng build && http-server -p 8086 -c-1 dist/<projname>`
-use for running
-`npm run start-pwa` 
-`ngrok http 8086 --host-header="localhost:8080"`
-
-## deploy
-ng add angular-cli-ghpages  
-ng deploy --base-href=https://turborium.github.io/turbopixel/
-
-## manual 
-ng build --base-href https://turborium.github.io/turbopixel/
-
-##
-https://kuros.in/ci/cd/use-private-repo-to-publish-website-with-github-pages/
+The original development README is available in the upstream repository and Git
+history. This is an independent fork, not an Apple product or an official iOS app.

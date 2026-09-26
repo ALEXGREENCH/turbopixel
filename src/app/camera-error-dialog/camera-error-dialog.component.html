@@ -1,7 +1,1 @@
-<div mat-dialog-content>
-    <p>Failed to access camera</p>
-</div>
-<div mat-dialog-actions style="display: flex; justify-content: center">
-    <button mat-raised-button color="primary" [mat-dialog-close]="CameraErrorDialogResult.TryAgain">Try again</button>
-    <button mat-raised-button [mat-dialog-close]="CameraErrorDialogResult.ReloadPage">Reload</button>
-</div>
+<h1 mat-dialog-title>Camera unavailable</h1><div mat-dialog-content><p>Allow camera access in your browser's site settings, or open a photo from your device.</p></div><div mat-dialog-actions><button mat-flat-button color="primary" [mat-dialog-close]="CameraErrorDialogResult.TryAgain">Try again</button><button mat-button mat-dialog-close>Use a photo instead</button></div>

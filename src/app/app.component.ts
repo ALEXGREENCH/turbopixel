@@ -36,7 +36,7 @@ import { iconCharForEffect } from './utils';
     selector: 'bottom-sheet-effects',
     template: `
     <mat-nav-list>
-      <a mat-list-item (click)="openLink(i)" *ngFor="let effect of data.effects; index as i;">
+      <a mat-list-item role="button" tabindex="0" (keydown.enter)="openLink(i)" (keydown.space)="$event.preventDefault(); openLink(i)" (click)="openLink(i)" *ngFor="let effect of data.effects; index as i;">
         <span class="appicon">{{effectIcon(effect)}} </span><span matLine>{{effect.title}}</span>
       </a>
     </mat-nav-list>
@@ -83,8 +83,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // title of application
     title: string = 'TurboPixel';
     // repo
-    repoLink: string = 'https://www.github.com/turborium/turbopixel';
-    appLink: string = 'https://turborium.github.io/turbopixel';
+    repoLink: string = 'https://github.com/ALEXGREENCH/turbopixel';
+    appLink: string = 'https://alexgreench.github.io/turbopixel/';
     socLink: string = 'https://t.me/turborium';
     // current state
     state: State = State.Init;
@@ -97,12 +97,75 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     effects: Array<PixelEffect> = effects;
 
+    sourceImage?: HTMLImageElement;
+    sourceLabel = 'DEMO PHOTO';
+    importError = '';
     private camera!: Camera;
+
+    resumePreview() {
+        if (this.sourceImage) {
+            this.state = State.Work;
+            clearInterval(this.timer);
+            this.timer = setInterval(() => this.updateFrame(), 1000 / this.cameraFPS);
+            this.updateFrame();
+        } else {
+            this.cameraStart(CameraType.Current);
+        }
+    }
+    startCamera() {
+        this.cameraStop();
+        this.sourceImage = undefined;
+        this.sourceLabel = 'LIVE CAMERA';
+        this.cameraStart(this.camera.hasEnvironmentCamera ? CameraType.Environment : CameraType.User);
+    }
+    async loadPhoto(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        try {
+            const photo = new Image();
+            photo.src = url;
+            await photo.decode();
+            this.cameraStop();
+            this.sourceImage = photo;
+            this.sourceLabel = 'YOUR PHOTO';
+            this.importError = '';
+            this.resumePreview();
+        } catch {
+            this.importError = 'This image could not be opened. Try a PNG, JPEG or WebP photo.';
+        } finally {
+            URL.revokeObjectURL(url);
+            input.value = '';
+        }
+    }
+    async useDemo() {
+        const photo = new Image();
+        photo.src = 'assets/demo-landscape.svg';
+        try {
+            await photo.decode();
+            this.sourceImage = photo;
+            this.sourceLabel = 'DEMO PHOTO';
+            this.resumePreview();
+        } catch { this.importError = 'Open a photo or start the camera to begin.'; }
+    }
+
     private contentwrapperResizeObserver?: ResizeObserver;
     private timer: any = 0;
     private hangsFrameCount: number = 0;
     private effectMaxWidth: number = 320;
     private effectMaxHeight: number = 320;
+    private resumeAfterVisibility = false;
+    private sourceCanvas = document.createElement('canvas');
+    private onVisibilityChange = () => {
+        if (document.visibilityState === 'hidden' && this.state === State.Work) {
+            this.resumeAfterVisibility = true;
+            this.cameraStop();
+        } else if (document.visibilityState === 'visible' && this.resumeAfterVisibility) {
+            this.resumeAfterVisibility = false;
+            this.resumePreview();
+        }
+    };
     private cachedCanvas = document.createElement('canvas');
     private watermark = new Image();
 
@@ -150,15 +213,16 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
         // get image and name
         const dataUrl = tempCanvas.toDataURL('image/png');
-        let fileName = 'TurboPixel ' + new Date(Date.now()).toLocaleString('fi-FI', {dateStyle: "short", timeStyle: "medium"}) + '.png';
+        let fileName = 'TurboPixel-' + new Date().toISOString().replace(/[:.]/g, '-') + '.png';
         const shareText = '#TurboPixel with \"' + this.effects[this.selectedEffect].title + '" palette' + '\n' + this.appLink;
 
         // save dialog
         // https://stackoverflow.com/questions/68094609/ios-15-safari-floating-address-bar
         const dialogRef = this.dialog.open(SaveDialogComponent, {
             disableClose: false,
-            maxWidth: "calc(94 * var(--safe-width))",
-            maxHeight: "calc(90 * var(--safe-height))",
+            width: "460px",
+            maxWidth: "calc(100vw - 24px)",
+            maxHeight: "calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)",
             // minWidth: "calc(50 * var(--safe-width))",
             // minHeight: "calc(60 * var(--safe-height))",
             data: {
@@ -175,7 +239,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
         // camer on
         dialogRef.afterClosed().subscribe(() => {
-            this.cameraStart(CameraType.Current);
+            this.resumePreview();
         });
     }
 
@@ -194,8 +258,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         const dialogRef = this.dialog.open(AboutDialogComponent, {
             disableClose: false,
             //panelClass: 'app-dialog-container',
-            maxWidth: "calc(94 * var(--safe-width))",
-            maxHeight: "calc(90 * var(--safe-height))",
+            width: "460px",
+            maxWidth: "calc(100vw - 24px)",
+            maxHeight: "calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)",
             data: {
                 appLink: this.appLink,
                 repoLink: this.repoLink,
@@ -210,7 +275,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
         // camera on
         dialogRef.afterClosed().subscribe(async (result) => {
-            this.cameraStart(CameraType.Current);
+            this.resumePreview();
         });
         /*navigator.clipboard.writeText(this.appLink)
         .then(() => {
@@ -224,11 +289,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     cameraStart(cameraType: CameraType) {
         this.state = State.Init;
-        this.camera.start(
+        Promise.resolve().then(() => this.camera.start(
             this.effectMaxWidth,//this.effects[this.selectedEffect].width,
             this.effectMaxHeight,//this.effects[this.selectedEffect].height,
             cameraType
-        )
+        ))
         .then(() => {
             this.state = State.Work;
 
@@ -243,15 +308,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
             this.updateFrame();
         })
         .catch((error) => {
+            this.state = State.Error;
             const dialogRef = this.dialog.open(CameraErrorDialogComponent, {
-                disableClose: true
+                disableClose: false
             });
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result == CameraErrorDialogResult.ReloadPage) {
                     window.location.reload();
-                } else {
+                } else if (result == CameraErrorDialogResult.TryAgain) {
                     this.cameraStart(cameraType);
+                } else {
+                    this.useDemo();
                 }
             });
         });
@@ -271,15 +339,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     changeEffect(effectIndex: number) {
-        /*if (this.state != State.Work ||
-            this.effects[effectIndex].width != this.camera.width ||
-            this.effects[effectIndex].height != this.camera.height) {
-          this.cameraStop();
-          this.selectedEffect = effectIndex;
-          this.cameraStart(CameraType.Current);
-        } else {
-          this.selectedEffect = effectIndex;
-        }*/
         this.hasFrame = false;
         this.selectedEffect = effectIndex;
         this.effectValue = 0.5;
@@ -290,17 +349,28 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.hasFrame = false;
         
         // check hangs frames (iOS)
-        if (navigator.userAgent.toLowerCase().includes('safari') && this.hangsTime < this.hangsFrameCount * (1000 / this.cameraFPS)) {
+        if (!this.sourceImage && this.hangsTime < this.hangsFrameCount * (1000 / this.cameraFPS)) {
             this.cameraStop();
-            this.cameraStart(CameraType.Current);
+            this.resumePreview();
             return;
         }
 
         // try get frame
-        let frame = this.camera.getFrameWithSize(
-            this.effects[this.selectedEffect].width,
-            this.effects[this.selectedEffect].height
-        );
+        const effect = this.effects[this.selectedEffect];
+        let frame: ImageData | null;
+        if (this.sourceImage) {
+            const source = this.sourceCanvas;
+            source.width = effect.width;
+            source.height = effect.height;
+            const context = source.getContext('2d')!;
+            const scale = Math.max(source.width / this.sourceImage.naturalWidth, source.height / this.sourceImage.naturalHeight);
+            const width = this.sourceImage.naturalWidth * scale;
+            const height = this.sourceImage.naturalHeight * scale;
+            context.drawImage(this.sourceImage, (source.width - width) / 2, (source.height - height) / 2, width, height);
+            frame = context.getImageData(0, 0, source.width, source.height);
+        } else {
+            frame = this.camera.getFrameWithSize(effect.width, effect.height);
+        }
         if (frame == null) {
             this.canvas.nativeElement.getContext("2d")!.clearRect(
                 0, 0,
@@ -353,57 +423,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        // refactor me please ...
+        document.addEventListener('visibilitychange', this.onVisibilityChange);
 
-        // iOS PWA - no scroll
-        if (navigator.userAgent.toLowerCase().includes('safari')) {
-            window.addEventListener("scroll", (e) => {
-                if (window.matchMedia('(display-mode: standalone)').matches) {
-                    e.preventDefault();
-                    window.scrollTo(0, 0);
-                }
-            });
-        }
-
-        // only for iOS PWA return from background
-        if (navigator.userAgent.toLowerCase().includes('safari')) {
-            addEventListener("visibilitychange", (event) => {
-                if (window.matchMedia('(display-mode: standalone)').matches) {
-                    if (document.visibilityState == 'visible' && this.state == State.Work) {
-                        this.cameraStop();
-                        this.cameraStart(CameraType.Current);
-                    }
-                }
-            });
-        }
-
-        // layout (arrrrr!)
         this.contentwrapperResizeObserver = new ResizeObserver((entries) => {
-            let aspect = this.effects[this.selectedEffect].width / this.effects[this.selectedEffect].height;
-            if (entries[0].contentRect.width / aspect < entries[0].contentRect.height) {
-                this.contentwrapper.nativeElement.style.flexDirection = "row";
-                this.image.nativeElement.style.height = ((1 / aspect) * this.contentwrapper.nativeElement.clientWidth).toString() + 'px';
-            } else {
-                this.contentwrapper.nativeElement.style.flexDirection = "column";
-                this.image.nativeElement.style.width = (aspect * this.contentwrapper.nativeElement.clientHeight).toString() + 'px';
-            }
+            const aspect = this.effects[this.selectedEffect].width / this.effects[this.selectedEffect].height;
+            const width = Math.min(entries[0].contentRect.width, entries[0].contentRect.height * aspect);
+            this.image.nativeElement.style.width = width + 'px';
+            this.image.nativeElement.style.height = width / aspect + 'px';
         });
         this.contentwrapperResizeObserver.observe(this.contentwrapper.nativeElement);
-
-        // mat-dialog overlapped by browser toolbar on mobile
-        // let var with real max w/h
-        // https://dev.to/maciejtrzcinski/100vh-problem-with-ios-safari-3ge9
-        // https://gist.github.com/getify/150ea5a3b30b8822dee7798883d120b9
-        // this is a dirty solution, in the future you need to use this:
-        // https://www.w3.org/TR/css-values-4/#viewport-relative-lengths
-        // https://www.bram.us/2021/07/08/the-large-small-and-dynamic-viewports/
-        // https://webkit.org/blog/12445/new-webkit-features-in-safari-15-4/
-        let windowResizeListener = () => {
-            document.documentElement.style.setProperty('--safe-width', (document.documentElement.clientWidth / 100).toString() + 'px');
-            document.documentElement.style.setProperty('--safe-height', (document.documentElement.clientHeight / 100).toString() + 'px');
-        }
-        window.addEventListener('resize', windowResizeListener);
-        windowResizeListener();
 
         // calc max effect size
         for (let effect of this.effects) {
@@ -418,11 +446,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // camera 
         this.camera = new Camera(this.video.nativeElement);
         //this.changeEffect(0);
-        this.cameraStart(this.camera.hasEnvironmentCamera ? CameraType.Environment : CameraType.User);
+        this.useDemo();
     }
 
     ngOnDestroy() {
-        this.contentwrapperResizeObserver?.unobserve(this.contentwrapper.nativeElement);
+        document.removeEventListener('visibilitychange', this.onVisibilityChange);
+        this.contentwrapperResizeObserver?.disconnect();
+        clearInterval(this.timer);
+        this.camera?.stop();
     }
 
     effectIcon(effect: PixelEffect) {
