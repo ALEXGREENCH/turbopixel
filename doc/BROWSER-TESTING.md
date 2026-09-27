@@ -1,7 +1,7 @@
 # Browser verification - 1.8.0
 
-51 checks pass: 13 Node checks (including the actual Angular worker under simulated
-network/cache/client boundaries) and 38 ChromeHeadless checks. Update coverage
+52 checks pass: 13 Node checks (including the actual Angular worker under simulated
+network/cache/client boundaries) and 39 ChromeHeadless checks. Update coverage
 includes skipping releases after old server files disappear, offline use, cache
 cleanup, incomplete release rejection, draft persistence/restoration and failures.
 See [UPDATES.md](UPDATES.md) for the lifecycle and real-device limits.

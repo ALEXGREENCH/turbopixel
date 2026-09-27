@@ -63,16 +63,20 @@ export class AppUpdates implements OnDestroy {
 
     async check(manual = false) {
         if (!this.sw.isEnabled) { if (manual) this.status = 'Updates are available in the installed or published app.'; return; }
+        if (manual && !this.ready) this.status = 'Checking for updates…';
         if (this.checking || document.hidden || (!manual && Date.now() - this.checkedAt < 30000)) return;
         if (!navigator.onLine) { if (manual) this.status = 'Connect to the internet to check for updates.'; return; }
         this.checking = true; this.checkedAt = Date.now();
+        let timeout: ReturnType<typeof setTimeout> | undefined;
         try {
             // Keep the same worker URL/scope so old Home Screen installations migrate.
             void navigator.serviceWorker?.getRegistration(document.baseURI).then(registration => registration?.update()).catch(() => {});
-            await this.sw.checkForUpdate();
-            if (manual && !this.ready) this.status = 'App is up to date.';
-        } catch { if (manual) this.status = 'Could not check. Try again when connected.'; }
-        finally { this.checking = false; }
+            await Promise.race([this.sw.checkForUpdate(), new Promise<never>((_, reject) => {
+                timeout = setTimeout(() => reject(new Error('Update check timed out')), 20000);
+            })]);
+            if ((manual || this.status === 'Checking for updates…') && !this.ready) this.status = 'App is up to date.';
+        } catch { if (manual || this.status === 'Checking for updates…') this.status = 'Could not check. Try again when connected.'; }
+        finally { clearTimeout(timeout); this.checking = false; }
     }
 
     async apply(saveDraft: () => Promise<void>) {

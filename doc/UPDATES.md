@@ -52,7 +52,7 @@ not cleared. The browser manages ordinary HTTP cache eviction separately.
 
 ## Verification
 
-51 checks: 13 Node and 38 ChromeHeadless. Worker tests execute the installed
+52 checks: 13 Node and 39 ChromeHeadless. Worker tests execute the installed
 Angular worker code with simulated network/cache/client boundaries. They remove
 A's files, skip B, install C, verify offline startup, keep A's live tab working,
 then verify A's cache is deleted when the tab closes. They also cover incomplete

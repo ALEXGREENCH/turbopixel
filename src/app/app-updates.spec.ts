@@ -2,6 +2,7 @@ import { AppUpdates, draftStore } from './app-updates';
 import { SwUpdate } from '@angular/service-worker';
 import { Subject } from 'rxjs';
 import packageJson from 'package.json';
+import { fakeAsync, tick } from '@angular/core/testing';
 
 describe('App updates', () => {
     let events: Subject<any>, broken: Subject<any>, service: AppUpdates, sw: any;
@@ -11,6 +12,19 @@ describe('App updates', () => {
         service = new AppUpdates(sw as SwUpdate);
     });
     afterEach(() => service.ngOnDestroy());
+    it('does not leave manual checks stuck when a worker is replaced during a request', fakeAsync(() => {
+        service.ngOnDestroy();
+        sw.checkForUpdate.and.returnValue(new Promise(() => {}));
+        service = new AppUpdates(sw);
+        void service.check(true);
+        expect(service.status).toContain('Checking');
+        tick(20001);
+        expect(service.status).toContain('Could not check');
+        sw.checkForUpdate.and.resolveTo(false);
+        void service.check(true); tick();
+        expect(service.status).toBe('App is up to date.');
+        service.ngOnDestroy();
+    }));
     it('offers only a fully installed newer release and never reloads an active editor automatically', () => {
         const reload = spyOn(service, 'reload');
         events.next({ type: 'VERSION_DETECTED' }); expect(service.ready).toBeFalse();
