@@ -1,3 +1,26 @@
+# Terminal revision — 1.6.1
+
+The previous green Courier treatment was replaced with a specific IBM 3270
+reference. The bundled font is 3270font v3.0.1, whose author documents a lineage
+through x3270 and Georgia Tech's 3270tool to characters copied from a physical
+terminal. This is a modern outline reconstruction, not a ROM font. The bundled
+license permits distribution, and conversion to WOFF2 preserves glyphs/metrics.
+
+The terminal styling uses plain text commands, fixed-width lettering, understated
+single-color rules and inverse selections. No GUI bevels, round thumb, shadows,
+blur, simulated boot output, scanlines or decorative flicker. Palette swatches
+and the photograph retain their actual colors because they communicate image
+content. Touch targets, accessibility labels, native inputs and all functionality
+remain; the light palette is explicitly a readability adaptation.
+
+Reference: [3270font provenance](https://github.com/rbanffy/3270font) and
+[IBM's description of character-cell terminals](https://www.ibm.com/docs/en/zos-basic-skills?topic=enhanced-introduction-3270-terminal).
+
+Verification: font loading test rejects silent system-font fallback; all existing
+contrast, export, installation and navigation tests remain in the suite. Font
+assets are bundled and covered by the PWA asset cache. Phone settings use a wider
+first theme column so “Automatic” fits without horizontal scrolling.
+
 # Interface audit — 1.6.0
 
 The title is now centered between two equal 44px utility targets. The original

@@ -1,0 +1,97 @@
+@font-face {
+ font-family: 'IBM 3270';
+ src: url('assets/fonts/3270-Regular.woff2') format('woff2');
+ font-style: normal; font-weight: 400; font-display: swap;
+}
+.terminal-glyph { display: none; }
+/* Character-terminal presentation: type, rules and reverse video. */
+html:root[data-style=terminal] {
+ body, button, input, output, code, .sheet-header h1, .sheet-header h2,
+ .mat-mdc-dialog-container, .mdc-dialog__content, .mat-bottom-sheet-container {
+  font-family: 'IBM 3270', monospace !important; font-synthesis: none; font-weight: 400 !important; letter-spacing: 0 !important;
+ }
+ body { font-size: 20px; line-height: 1.4; }
+ button, .source-control button, .effect-name, .capture-button, .palette-option, .style-option,
+ .segmented-picker button, .setting-row strong { font-size: 20px; font-weight: 400; }
+ .brand h1, .sheet-header h1, .sheet-header h2 { font-family: 'IBM 3270', monospace; font-size: 22px; font-weight: 400; letter-spacing: 0; }
+ .brand h1, .sheet-header h1, .sheet-header h2, button { text-transform: uppercase; }
+ .app-header { grid-template-columns: 48px minmax(0,1fr) 48px; padding-block: max(12px, env(safe-area-inset-top)) 8px; border-bottom: 1px solid var(--line); }
+ .app-header button { width: 48px; }
+ .app-content-image, .editing-dock, .plain-button, .icon-button, .prominent-button,
+ .source-control, .palette-search, .segmented-picker, .palette-option, .style-option,
+ .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container {
+  border-radius: 0 !important; box-shadow: none !important; background-image: none !important;
+ }
+ .editing-dock { padding: 16px 0; border: 0; border-block: 1px solid var(--line); background: var(--page-bg) !important; }
+ .editing-dock::before, .source-control::before, .segmented-picker::before, .app-content-image::before { display: none; }
+ .source-control, .segmented-picker { gap: 8px; padding: 0; background: none; }
+ .segmented-picker { display: grid; grid-template-columns: minmax(9ch, 1.3fr) 1fr 1fr; gap: 4px; font-size: 18px; }
+ .segmented-picker button { padding-inline: 0; font-size: 18px; }
+ .source-control button, .segmented-picker button { border: 1px solid transparent; }
+ .source-control button.selected, .segmented-picker button[aria-pressed=true] { color: var(--page-bg); background: var(--text); }
+ .source-control button:not(.selected)::before { content: '['; }
+ .source-control button:not(.selected)::after { content: ']'; }
+ .dock-heading, .intensity-heading, .intensity-heading output, .preview-status, .sheet-count,
+ .theme-picker legend, .style-picker legend, .sheet-description, .setting-row small { font-size: 18px; font-weight: 400; }
+ .dock-heading { margin: 20px 0 4px; text-transform: uppercase; }
+ .effect-selector { border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+ .effect-selector .icon-button { color: var(--text); }
+ .effect-name { justify-content: space-between; font-size: 20px; }
+ .effect-name app-icon { width: 1ch; }
+ .preview-status { gap: 16px; height: 36px; padding-top: 8px; text-transform: uppercase; }
+ .source-status i { display: none; }
+ .intensity-heading { margin-inline: 0; text-transform: uppercase; }
+ .intensity-slider { padding: 0; }
+ .intensity-slider::-webkit-slider-runnable-track { height: 2px; border-radius: 0; background: var(--line); }
+ .intensity-slider::-moz-range-track, .intensity-slider::-moz-range-progress { height: 2px; border-radius: 0; background: var(--line); }
+ .intensity-slider::-webkit-slider-thumb { width: 12px; height: 22px; margin-top: -10px; border-radius: 0; background: var(--text); border: 0; box-shadow: none; }
+ .intensity-slider::-moz-range-thumb { width: 12px; height: 22px; border-radius: 0; background: var(--text); border: 0; box-shadow: none; }
+ .shuffle-button, .dock-actions .icon-button { width: 48px; background: none; border: 1px solid var(--line); }
+ .capture-button, .prominent-button { border: 1px solid var(--text); background: var(--text); color: var(--page-bg); }
+ app-icon svg { display: none; }
+ app-icon .terminal-glyph { display: inline; white-space: nowrap; font-family: 'IBM 3270', monospace; font-size: inherit; line-height: 1; }
+ app-icon { width: auto !important; height: auto !important; font-size: inherit; }
+ app-icon[data-icon=photo], app-icon[data-icon=camera], app-icon[data-icon=share], app-icon[data-icon=download], app-icon[data-icon=copy] { display: none; }
+ .app-footer { font-size: 16px; border-top: 1px solid var(--line); padding-top: 4px; }
+ .install-link { font-size: 16px; padding-inline: 0; }
+ .sheet-header { border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+ .sheet-header .sheet-done { font-size: 20px; }
+ .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container { border: 1px solid var(--text); }
+ .palette-top { border-bottom: 0; }
+ .palette-search { border-bottom: 1px solid var(--text); padding-inline: 0; }
+ .palette-search input { font-size: 20px; }
+ .palette-grid { gap: 0; }
+ .palette-option { border-bottom: 1px solid var(--line); gap: 8px; text-transform: none; }
+ .palette-option[aria-pressed=true] { outline: 1px solid var(--text); outline-offset: -1px; background: var(--selected-fill); }
+ .palette-swatch { border-radius: 0; flex-basis: 24px; height: 24px; box-shadow: none; }
+ .style-option { text-transform: none; }
+ .style-option small { font-size: 16px; }
+ .style-option[aria-pressed=true] { outline: 1px solid var(--text); outline-offset: -1px; }
+ .setting-row { align-items: flex-start; }
+ .switch-track { width: 3ch; height: 32px; background: none; border-radius: 0; font-size: 20px; }
+ .switch-track::after { content: '[ ]'; display: inline; width: auto; height: auto; margin: 0; box-shadow: none; background: none; border-radius: 0; }
+ .setting-row input:checked + .switch-track { background: none; }
+ .setting-row input:checked + .switch-track::after { content: '[X]'; transform: none; }
+ .sheet-grabber { border-radius: 0; width: 40px; height: 2px; background: var(--secondary); }
+ .style-sample[data-sample=terminal] { background: #080e09; }
+ .style-sample[data-sample=terminal]::before { background: none; }
+ .style-sample[data-sample=terminal] i { background: #a2d493; }
+ button:not(:disabled):active { transform: none; background: var(--text); color: var(--page-bg); }
+ :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+ @media (hover: hover) { .plain-button:hover:not(:disabled), .icon-button:hover:not(:disabled) { background: var(--selected-fill); } }
+ @media (max-width: 700px) {
+  .studio { padding-inline: max(20px, env(safe-area-inset-left)); gap: 12px; }
+  .app-content { height: clamp(180px, calc(100dvh - 452px), 510px); }
+  .brand h1 { font-size: 22px; }
+  .editing-dock { padding: 12px 0; }
+  .dock-heading { display: none; }
+  .app-footer { padding-inline: 16px; }
+  .source-control button { gap: 4px; padding-inline: 2px; }
+  .palette-grid { grid-template-columns: 1fr; }
+  .palette-option { min-height: 48px; }
+ }
+ @media (max-width: 360px) { .app-footer, .install-link { font-size: 12px; } }
+ @media (forced-colors: active) {
+  .prominent-button, .source-control button.selected, .segmented-picker button[aria-pressed=true] { background: Highlight; color: HighlightText; }
+ }
+}

@@ -6,7 +6,7 @@ export const interfaceStyles: { value: InterfaceStyle; label: string; era: strin
     { value: 'modern', label: 'Modern', era: 'Today' },
     { value: 'system1984', label: 'Monochrome', era: '1984' },
     { value: 'desktop1995', label: 'Desktop', era: '1995' },
-    { value: 'terminal', label: 'Terminal', era: '1970s' }
+    { value: 'terminal', label: 'Terminal', era: 'IBM 3270' }
 ];
 
 export type AppearanceTheme = 'auto' | 'light' | 'dark';
@@ -39,7 +39,7 @@ export class Appearance {
         root.dataset['still'] = String(this.still);
         document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach(meta => {
             const dark = this.theme === 'dark' || (this.theme === 'auto' && meta.media.includes('dark'));
-            meta.content = this.style === 'classic' ? '#ff6500' : this.style === 'terminal' ? (dark ? '#101b14' : '#e5efe5') : dark ? '#131419' : '#f0f1f4';
+            meta.content = this.style === 'classic' ? '#ff6500' : this.style === 'terminal' ? (dark ? '#080e09' : '#e1e8da') : dark ? '#131419' : '#f0f1f4';
         });
         try { localStorage.setItem('turbopixel-appearance', JSON.stringify({ style: this.style, theme: this.theme, opaque: this.opaque, still: this.still })); }
         catch { /* Appearance remains available for this session. */ }

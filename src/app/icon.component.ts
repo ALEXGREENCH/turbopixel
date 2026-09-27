@@ -20,10 +20,12 @@ const paths: Record<string, string[]> = {
 
 @Component({
     selector: 'app-icon',
-    template: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path *ngFor="let path of glyph" [attr.d]="path" /></svg>`,
+    host: { '[attr.data-icon]': 'name' },
+    template: `<span class="terminal-glyph" aria-hidden="true">{{terminalGlyph}}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path *ngFor="let path of glyph" [attr.d]="path" /></svg>`,
     styles: [':host { display: inline-flex; flex: 0 0 auto; width: 22px; height: 22px; vertical-align: middle; } svg { width: 100%; height: 100%; }']
 })
 export class IconComponent {
     @Input() name = 'pixels';
+    get terminalGlyph() { return ({ appearance: 'SET', info: '?', left: '<', right: '>', down: 'v', shuffle: 'RND', flip: 'FLIP', check: '*', search: '/', arrow: '>' } as Record<string, string>)[this.name] || ''; }
     get glyph() { return paths[this.name] || paths['pixels']; }
 }

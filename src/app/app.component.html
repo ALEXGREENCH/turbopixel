@@ -23,8 +23,8 @@
             <input #photoInput type="file" accept="image/*" hidden (change)="loadPhoto($event)">
             <div class="editing-dock liquid-glass">
             <div class="source-control" role="group" aria-label="Photo source" [class.camera-selected]="!sourceImage">
-                <button class="plain-button" [class.selected]="!!sourceImage" [attr.aria-pressed]="!!sourceImage" [disabled]="state == State.Init" (click)="photoInput.click()"><app-icon name="photo"></app-icon>Open photo</button>
-                <button class="plain-button" [class.selected]="!sourceImage" [attr.aria-pressed]="!sourceImage" [disabled]="state == State.Init" (click)="startCamera()"><app-icon name="camera"></app-icon>Camera</button>
+                <button class="plain-button" aria-label="Open photo" [class.selected]="!!sourceImage" [attr.aria-pressed]="!!sourceImage" [disabled]="state == State.Init" (click)="photoInput.click()"><app-icon name="photo"></app-icon>Open photo</button>
+                <button class="plain-button" aria-label="Camera" [class.selected]="!sourceImage" [attr.aria-pressed]="!sourceImage" [disabled]="state == State.Init" (click)="startCamera()"><app-icon name="camera"></app-icon>Camera</button>
             </div>
             <p *ngIf="importError" class="import-error" role="alert">{{importError}}</p>
                 <div class="dock-heading"><span>Palette</span></div>

@@ -203,16 +203,16 @@ button:not(:disabled):active { transform: scale(.975); transition-duration: 100m
  --photo-mount: #53595c; --ambient-opacity: 0; --page-secondary: #ffffff; --header-text: #ffffff; --desktop-edge: #949b9d #17191a #17191a #949b9d;
 }
 @mixin terminal-light {
- --page-bg: #e5efe5; --solid: #f2faf0; --text: #163b25; --secondary: #3a5e42;
- --accent: #216335; --focus: #216335; --action: #215b32; --action-text: #fff;
- --line: #7a987c; --inset-fill: #d8e6d5; --selected-fill: #fff; --track: #769278;
- --photo-mount: #9bb59d; --ambient-opacity: 0;
+ --page-bg: #e1e8da; --solid: #e1e8da; --text: #203f27; --secondary: #37513a;
+ --accent: #203f27; --focus: #203f27; --action: #203f27; --action-text: #e1e8da;
+ --line: #73866c; --inset-fill: transparent; --selected-fill: #c3d1ba; --track: #73866c;
+ --photo-mount: transparent; --ambient-opacity: 0;
 }
 @mixin terminal-dark {
- --page-bg: #0b140e; --solid: #101f15; --text: #b6f5bb; --secondary: #91b79a;
- --accent: #9de8a7; --focus: #9de8a7; --action: #a3dfac; --action-text: #102919;
- --line: #4d7955; --inset-fill: #07100a; --selected-fill: #294332; --track: #648a6a;
- --photo-mount: #284432; --ambient-opacity: 0;
+ --page-bg: #080e09; --solid: #080e09; --text: #a2d493; --secondary: #88ae7e;
+ --accent: #a2d493; --focus: #a2d493; --action: #a2d493; --action-text: #080e09;
+ --line: #4f7048; --inset-fill: transparent; --selected-fill: #263522; --track: #4f7048;
+ --photo-mount: transparent; --ambient-opacity: 0;
 }
 :root[data-style=classic] { @include classic-light; }
 :root[data-style=system1984] { @include mono-light; }
@@ -230,7 +230,7 @@ button:not(:disabled):active { transform: scale(.975); transition-duration: 100m
 }
 :root[data-style=classic] .app-header { width: 100%; padding-bottom: 12px; }
 :root[data-style=classic] .editing-dock { box-shadow: 0 8px 24px -18px #50200055; }
-:root[data-style=system1984], :root[data-style=terminal] {
+:root[data-style=system1984] {
  body, button, input, .sheet-header h1 { font-family: 'Courier New', monospace; }
  .editing-dock, .app-content-image::before, .glass-dialog .mat-mdc-dialog-surface, .palette-sheet .mat-bottom-sheet-container { border-radius: 4px !important; border: 1px solid var(--line); box-shadow: 3px 3px 0 var(--line); }
  .plain-button, .prominent-button, .icon-button, .source-control, .palette-search, .segmented-picker { border-radius: 3px !important; }
@@ -282,3 +282,5 @@ button:not(:disabled):active { transform: scale(.975); transition-duration: 100m
 .sheet-drag-handle { height: 26px; display: flex; justify-content: center; touch-action: none; cursor: grab; }
 .sheet-drag-handle:active { cursor: grabbing; }
 .sheet-drag-handle .sheet-grabber { margin-top: 10px; }
+
+@import 'terminal';

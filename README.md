@@ -6,6 +6,15 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 five interface styles and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
+## Changes in 1.6.1
+
+Terminal now uses the locally bundled **3270font**, a documented reconstruction
+of physical IBM 3270-series terminal lettering, instead of Courier. Text commands,
+reverse-video selections, a block slider thumb and character-style switches replace
+rounded GUI controls. The light theme is an accessibility adaptation; the dark
+presentation uses subdued green on black. Photo colors and export stay unchanged.
+Font provenance and license are included in `src/assets/fonts/`.
+
 ## Changes in 1.6.0
 
 - Restore the centered **#TurboPixel** title, without an extra brand icon.
