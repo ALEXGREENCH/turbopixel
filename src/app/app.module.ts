@@ -59,9 +59,8 @@ import { AboutDialogComponent } from './about-dialog/about-dialog.component';
         // --
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: !isDevMode(),
-            // Register the ServiceWorker as soon as the application is stable
-            // or after 30 seconds (whichever comes first).
-            registrationStrategy: 'registerWhenStable:30000'
+            // Frame timers keep this camera app busy; do not wait for stability.
+            registrationStrategy: 'registerImmediately'
         }),
     ],
     providers: [{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { ...new MatDialogConfig(), enterAnimationDuration: 280, exitAnimationDuration: 180 } }],

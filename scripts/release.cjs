@@ -1,0 +1,22 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const { createHash } = require('node:crypto');
+const directory = path.resolve(__dirname, '../dist/turbopixel');
+const { version } = require('../package.json');
+const indexPath = path.join(directory, 'index.html');
+const original = fs.readFileSync(indexPath, 'utf8').replace(/<meta name="turbopixel-build" content="[^"]*">/, '');
+const build = createHash('sha256').update(original).digest('hex').slice(0, 16);
+const index = original.replace('</head>', '<meta name="turbopixel-build" content="' + build + '"></head>');
+fs.writeFileSync(indexPath, index);
+const release = { version, build };
+const manifestPath = path.join(directory, 'ngsw.json');
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+manifest.appData = release;
+manifest.hashTable[manifest.index] = createHash('sha1').update(index).digest('hex');
+fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+fs.writeFileSync(path.join(directory, 'version.json'), JSON.stringify(release) + '\n');
+// Stable URL, changing bytes: existing installed PWAs discover every release.
+const workerPath = path.join(directory, 'ngsw-worker.js');
+const worker = fs.readFileSync(workerPath, 'utf8').replace(/\n\/\/ TurboPixel release:.*\n?$/, '');
+fs.writeFileSync(workerPath, worker + '\n// TurboPixel release: ' + version + ' ' + build + '\n');
+console.log('Prepared release', release);

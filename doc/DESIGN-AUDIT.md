@@ -1,3 +1,11 @@
+# Single responsive layout - 1.8.0
+
+Remove the expanded-preview state, its history entry and its scale controls.
+The phone layout now directly uses the frameless full-width preview, followed by
+palette/Save and secondary settings. Wide screens keep a large preview beside
+the controls. No artificial image zoom or separate mode is required. The header,
+complete watermark, original effect aspect ratio and all editing actions remain.
+
 # Full-frame revision - 1.7.1
 
 Full frame now uses ordinary document scrolling, retaining the header and footer.

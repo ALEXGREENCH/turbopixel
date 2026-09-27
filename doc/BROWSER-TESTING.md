@@ -1,3 +1,17 @@
+# Browser verification - 1.8.0
+
+51 checks pass: 13 Node checks (including the actual Angular worker under simulated
+network/cache/client boundaries) and 38 ChromeHeadless checks. Update coverage
+includes skipping releases after old server files disappear, offline use, cache
+cleanup, incomplete release rejection, draft persistence/restoration and failures.
+See [UPDATES.md](UPDATES.md) for the lifecycle and real-device limits.
+
+Manual Chromium checks cover the single responsive layout with no FULL/expand
+button, a complete frameless preview, Save/palettes and all secondary controls.
+On 390x667 Modern, the frame fills the 375px content width (desktop scrollbar)
+and Save ends at 586px. On 1280x900, the frame is 718px square, controls beside it.
+The production PWA reports its current version through About / Check for updates.
+
 # Browser verification - 1.7.1
 
 43 checks pass (10 Node export, 33 ChromeHeadless). The expanded-view regression

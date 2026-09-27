@@ -17,7 +17,7 @@
 // Lasciate ogne speranza, voi ch’entrate
 
 import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener, NgZone } from '@angular/core';
-import { Subject } from 'rxjs';
+import { AppUpdates, draftStore } from './app-updates';
 import { OverlayNavigation } from './overlay-navigation';
 import { GlassOptics } from './glass-optics';
 import { AppInstall, InstallComponent } from './install';
@@ -102,38 +102,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     @ViewChild('contentwrapper') contentwrapper!: ElementRef<HTMLElement>;
 
     readonly State = State;
-    previewExpanded = false;
-    private previewClosed?: Subject<void>;
-    private previewScrollTop = 0;
-    private previewScrollFrame?: number;
-
-    togglePreview() {
-        if (this.previewExpanded) { this.closePreview(); return; }
-        this.previewScrollTop = window.scrollY;
-        this.previewExpanded = true;
-        this.previewClosed = new Subject<void>();
-        this.navigation.track(() => this.closePreview(), this.previewClosed);
-        this.scrollAfterLayout(0);
-    }
-    private closePreview() {
-        this.previewExpanded = false;
-        const closed = this.previewClosed;
-        this.previewClosed = undefined;
-        closed?.next(); closed?.complete();
-        this.scrollAfterLayout(this.previewScrollTop);
-    }
-    private scrollAfterLayout(top: number) {
-        if (this.previewScrollFrame !== undefined) cancelAnimationFrame(this.previewScrollFrame);
-        this.previewScrollFrame = requestAnimationFrame(() => {
-            this.previewScrollFrame = undefined;
-            window.scrollTo(0, top);
-        });
-    }
-    @HostListener('document:keydown.escape', ['$event'])
-    escapePreview(event: KeyboardEvent) {
-        if (!this.previewExpanded || document.querySelector('.cdk-overlay-container [role="dialog"]')) return;
-        event.preventDefault(); this.closePreview();
-    }
     private fitPreview() {
         const wrapper = this.contentwrapper?.nativeElement;
         const image = this.image?.nativeElement;
@@ -202,6 +170,39 @@ export class AppComponent implements AfterViewInit, OnDestroy {
             input.value = '';
         }
     }
+    async updateApp() {
+        await this.updates.apply(async () => {
+            if (!this.sourceImage && !this.hasFrame) return;
+            const snapshot = document.createElement('canvas');
+            const image = this.sourceImage;
+            const video = this.video.nativeElement;
+            snapshot.width = image ? image.naturalWidth : video.videoWidth;
+            snapshot.height = image ? image.naturalHeight : video.videoHeight;
+            if (!snapshot.width || !snapshot.height) throw new Error('No source frame');
+            snapshot.getContext('2d')!.drawImage(image || video, 0, 0);
+            const photo = await new Promise<Blob>((resolve, reject) => snapshot.toBlob(blob => blob ? resolve(blob) : reject(new Error('Could not save frame')), 'image/png'));
+            await draftStore('write', { photo, effect: this.selectedEffect, intensity: this.effectValue });
+        });
+    }
+    private async restoreUpdateDraft() {
+        try {
+            const draft = await draftStore('read');
+            if (draft?.photo instanceof Blob) {
+                const url = URL.createObjectURL(draft.photo);
+                try {
+                    const photo = new Image(); photo.src = url; await photo.decode();
+                    this.sourceImage = photo; this.sourceLabel = 'YOUR PHOTO';
+                    this.selectedEffect = Number.isInteger(draft.effect) && this.effects[draft.effect] ? draft.effect : 0;
+                    this.effectValue = Number.isFinite(draft.intensity) ? Math.max(0, Math.min(1, draft.intensity)) : .5;
+                    this.fitPreview(); this.resumePreview();
+                    await draftStore('delete').catch(() => {});
+                    return;
+                } finally { URL.revokeObjectURL(url); }
+            }
+        } catch { /* Storage can be unavailable; opening a photo and the camera still work. */ }
+        await this.useDemo();
+    }
+
     async useDemo() {
         const photo = new Image();
         photo.src = 'assets/demo-landscape.svg';
@@ -236,7 +237,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     private readonly hangsTime = 1800;
     private optics?: GlassOptics;
 
-    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance, private zone: NgZone, public install: AppInstall, private navigation: OverlayNavigation) {
+    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance, private zone: NgZone, public install: AppInstall, private navigation: OverlayNavigation, public updates: AppUpdates) {
 
     }
 
@@ -404,7 +405,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
                 } else if (result == CameraErrorDialogResult.TryAgain) {
                     this.cameraStart(cameraType);
                 } else {
-                    this.useDemo();
+                    void this.restoreUpdateDraft();
                 }
             });
         });
@@ -545,12 +546,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // camera 
         this.camera = new Camera(this.video.nativeElement);
         //this.changeEffect(0);
-        this.useDemo();
+        void this.restoreUpdateDraft();
     }
 
     ngOnDestroy() {
-        if (this.previewScrollFrame !== undefined) cancelAnimationFrame(this.previewScrollFrame);
-        this.previewClosed?.complete();
         this.previewAnimation?.cancel();
         this.optics?.destroy();
         document.removeEventListener('visibilitychange', this.onVisibilityChange);

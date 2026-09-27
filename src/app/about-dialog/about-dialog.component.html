@@ -9,4 +9,6 @@
     <details><summary>Support the original creator</summary><div *ngFor="let wallet of wallets" class="wallet"><strong>{{wallet.title}}</strong><button class="plain-button" [attr.aria-label]="'Copy ' + wallet.title + ' address'" (click)="copyWallet(wallet.id)">Copy</button><code class="selectable">{{wallet.id}}</code></div></details>
     <p role="status" class="copy-status">{{copyStatus}}</p>
     <p class="version">TurboPixel {{version}}</p>
+    <button class="plain-button" (click)="updates.check(true)">Check for updates</button>
+    <p role="status">{{updates.status}}</p>
 </div>

@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { AppModule } from './app.module';
-import { OVERLAY_WINDOW, OverlayNavigation } from './overlay-navigation';
+import { OVERLAY_WINDOW } from './overlay-navigation';
 import { AppComponent } from './app.component';
+import { AppUpdates, draftStore } from './app-updates';
 
 describe('Photo studio', () => {
     beforeEach(async () => { await TestBed.configureTestingModule({ imports: [AppModule], providers: [{ provide: OVERLAY_WINDOW, useValue: { history: { state: null, pushState() {}, back() {} }, addEventListener() {}, removeEventListener() {} } }] }).compileComponents(); });
@@ -25,36 +26,23 @@ describe('Photo studio', () => {
         expect(app.selectedEffect).toBe(0);
         fixture.destroy();
     });
-    it('expands the existing preview and returns through Back without losing the photo or settings', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.componentInstance;
+    it('restores the source photo and effect after an update, then removes the temporary draft', async () => {
+        const fixture = TestBed.createComponent(AppComponent), app = fixture.componentInstance;
         spyOn(app, 'ngAfterViewInit'); fixture.detectChanges();
-        const track = spyOn(TestBed.inject(OverlayNavigation), 'track');
-        const photo = new Image(); app.sourceImage = photo; app.selectedEffect = 3; app.effectValue = .37;
-        const canvas = app.canvas.nativeElement;
-        app.togglePreview(); fixture.detectChanges();
-        expect(fixture.nativeElement.querySelector('.preview-expanded')).not.toBeNull();
-        expect(fixture.nativeElement.querySelector('[aria-label="Exit large preview"]')).not.toBeNull();
-        for (const selector of ['.app-header', '.source-control', '.intensity-slider', '.shuffle-button', '.app-footer']) {
-            expect(getComputedStyle(fixture.nativeElement.querySelector(selector)).display).not.toBe('none');
-        }
-        expect(getComputedStyle(fixture.nativeElement.querySelector('.app-content-image'), '::before').display).toBe('none');
-        track.calls.mostRecent().args[0](); fixture.detectChanges();
-        expect(app.previewExpanded).toBeFalse();
-        expect(app.sourceImage).toBe(photo); expect(app.selectedEffect).toBe(3); expect(app.effectValue).toBe(.37);
-        expect(app.canvas.nativeElement).toBe(canvas); fixture.destroy();
-    });
-    it('lets an open dialog consume Escape before leaving large preview', () => {
-        const fixture = TestBed.createComponent(AppComponent); const app = fixture.componentInstance;
-        spyOn(TestBed.inject(OverlayNavigation), 'track');
-        app.togglePreview();
-        const container = document.createElement('div'); container.className = 'cdk-overlay-container';
-        const dialog = document.createElement('div'); dialog.setAttribute('role', 'dialog');
-        container.appendChild(dialog); document.body.appendChild(container);
-        try { app.escapePreview(new KeyboardEvent('keydown', { key: 'Escape' })); expect(app.previewExpanded).toBeTrue(); }
-        finally { container.remove(); }
-        app.escapePreview(new KeyboardEvent('keydown', { key: 'Escape' })); expect(app.previewExpanded).toBeFalse();
-        fixture.destroy();
+        const source = document.createElement('canvas'); source.width = 2; source.height = 2;
+        source.getContext('2d')!.fillStyle = '#ff0000'; source.getContext('2d')!.fillRect(0, 0, 2, 2);
+        const photo = new Image(); photo.src = source.toDataURL(); await photo.decode();
+        app.sourceImage = photo; app.hasFrame = true; app.selectedEffect = 7; app.effectValue = .375;
+        const updates = TestBed.inject(AppUpdates); updates.ready = true;
+        const reload = spyOn(updates, 'reload'); await app.updateApp();
+        expect(reload).toHaveBeenCalledTimes(1); fixture.destroy();
+        const restored = TestBed.createComponent(AppComponent), next = restored.componentInstance;
+        spyOn(next, 'ngAfterViewInit'); spyOn(next, 'resumePreview'); restored.detectChanges();
+        await (next as any).restoreUpdateDraft();
+        expect(next.sourceImage!.naturalWidth).toBe(2); expect(next.selectedEffect).toBe(7); expect(next.effectValue).toBe(.375);
+        source.getContext('2d')!.drawImage(next.sourceImage!, 0, 0);
+        expect([...source.getContext('2d')!.getImageData(0, 0, 1, 1).data]).toEqual([255, 0, 0, 255]);
+        expect(await draftStore('read')).toBeUndefined(); restored.destroy();
     });
     it('crossfades palette changes without putting the transition into image data', () => {
         const fixture = TestBed.createComponent(AppComponent);

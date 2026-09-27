@@ -6,6 +6,22 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 five interface styles and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
+## Changes in 1.8.0
+
+- One responsive layout replaces the separate expanded-preview mode. On phones,
+  the frameless image fills the available width and controls follow below it.
+- Checks for updates at startup, on return/connection and every five minutes while
+  visible. About includes a manual check. Ready updates preserve the source photo
+  (or a camera snapshot), palette and intensity before reloading.
+- Online navigation requests a fresh app shell; complete cached releases remain
+  available offline. All app assets are prefetched and verified before an update
+  is offered. A recovery path handles missing old resources.
+- Deployments contain only the current build. Browser caches retain the current
+  release and versions still used by open tabs; Angular removes unused versions.
+  No release-directory archive or blanket origin cache deletion is used.
+
+See [update lifecycle and recovery](doc/UPDATES.md).
+
 ## Changes in 1.7.1
 
 Full frame keeps the app header and removes the photo mount, rounded surround

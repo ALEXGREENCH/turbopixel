@@ -1,13 +1,14 @@
 {
   "name": "turbopixel",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "postbuild": "node scripts/release.cjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "start-pwa": "ng build && http-server -p 8086 -c-1 dist/turbopixel",
+    "start-pwa": "npm run build && http-server -p 8086 -c-1 dist/turbopixel",
     "test:export": "node --test test/*.test.cjs",
     "test:ci": "npm run test:export && ng test --watch=false --browsers=ChromeHeadless"
   },

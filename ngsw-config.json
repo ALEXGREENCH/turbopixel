@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
+  "navigationRequestStrategy": "freshness",
   "assetGroups": [
     {
       "name": "app",
@@ -17,7 +18,7 @@
     },
     {
       "name": "assets",
-      "installMode": "lazy",
+      "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": [

@@ -2,8 +2,6 @@ import { Component, Input } from '@angular/core';
 
 // Original outline glyphs, drawn on a shared 24px grid. No remote font needed.
 const paths: Record<string, string[]> = {
-    expand: ['M8 3H3v5', 'M16 3h5v5', 'M3 16v5h5', 'M21 16v5h-5'],
-    collapse: ['M3 8h5V3', 'M21 8h-5V3', 'M8 21v-5H3', 'M16 21v-5h5'],
     photo: ['M4 4h16v16H4z', 'm4 16 5-5 4 4 3-3 4 4', 'M15 8h.01'],
     camera: ['M8 5 9.5 3h5L16 5h4a1 1 0 0 1 1 1v13H3V6a1 1 0 0 1 1-1z', 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0'],
     share: ['M12 15V3', 'm8 7 4-4 4 4', 'M7 10H4v11h16V10h-3'],
@@ -28,6 +26,6 @@ const paths: Record<string, string[]> = {
 })
 export class IconComponent {
     @Input() name = 'pixels';
-    get terminalGlyph() { return ({ expand: 'FULL', collapse: 'BACK', appearance: 'SET', info: '?', left: '<', right: '>', down: 'v', shuffle: 'RND', flip: 'FLIP', check: '*', search: '/', arrow: '>' } as Record<string, string>)[this.name] || ''; }
+    get terminalGlyph() { return ({ appearance: 'SET', info: '?', left: '<', right: '>', down: 'v', shuffle: 'RND', flip: 'FLIP', check: '*', search: '/', arrow: '>' } as Record<string, string>)[this.name] || ''; }
     get glyph() { return paths[this.name] || paths['pixels']; }
 }

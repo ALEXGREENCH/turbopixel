@@ -1,3 +1,4 @@
+import { AppUpdates } from '../app-updates';
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -34,7 +35,7 @@ export class AboutDialogComponent {
             id: '43tgaMx2F4mcTpHnf1xG77AyX9g2ftybU97UXfpn6E5C5EVE5bkTosFdyeec65oBH8Au3SmSZdvBAFkh3uxdGh32HcJc28p',
         },
     ];
-    constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: any, public updates: AppUpdates) { }
 
     copy(text: string, tooltip: MatTooltip) {
         navigator.clipboard.writeText(text)
