@@ -1,3 +1,18 @@
+# Browser verification — 1.6.0
+
+40 checks: 10 Node export tests and 30 ChromeHeadless checks. New coverage includes
+real asynchronous History/PopState events, nested overlays, closing/reopening
+while history traversal is pending, expired Forward entries, drag thresholds and
+pointer cancellation, validated style persistence, ten style/theme contrast
+variants and the matte shader center's immunity to sharp source changes.
+
+Mobile review covers the centered title, all five styles, palette selection,
+settings scrolling at 320px, and unchanged photo/watermark bounds. The in-app
+browser does not expose its native Back control to automation; a keyboard
+shortcut did not navigate there. History claims are therefore supported by the
+real ChromeHeadless history integration check and service tests. OS back-swipe
+animation and Safari share/PWA installation still need real-device acceptance.
+
 # Browser verification â€” 1.5.0
 
 ## 1.5.0 regression checks

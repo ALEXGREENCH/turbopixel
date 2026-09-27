@@ -3,8 +3,23 @@
 [Open TurboPixel](https://alexgreench.github.io/turbopixel/) · [Original by turborium](https://github.com/turborium/turbopixel)
 
 A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
-a Liquid Glass-inspired interface and a rebuilt PNG export flow. Original authorship,
+five interface styles and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
+
+## Changes in 1.6.0
+
+- Restore the centered **#TurboPixel** title, without an extra brand icon.
+- Default to solid Classic orange. Appearance also offers Modern, Monochrome
+  (1984), Desktop (1995) and Terminal, each with light/dark options.
+- Browser/device Back closes the active sheet or dialog. Done, selection, Escape
+  and backdrop dismissal consume the corresponding history entry. Forward does
+  not reopen a dismissed dialog with stale photo data.
+- On phones the palette sheet meets the bottom safe area. Drag its handle down
+  to dismiss; search does not summon the keyboard until tapped.
+- Optional Modern glass has a 99.2% matte center and one subdued edge, with no
+  secondary highlight ring. Exported images remain unaffected.
+- Forty automated checks include real browser history events, drag dismissal,
+  ten style/theme contrast variants and rendered shader contrast.
 
 ## Changes in 1.5.0
 

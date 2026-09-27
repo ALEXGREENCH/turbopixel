@@ -1,14 +1,9 @@
 <div class="app-container">
     <div class="ambient-field" aria-hidden="true"><canvas #ambient></canvas></div>
     <header class="app-header">
-        <div class="brand">
-            <app-icon name="pixels"></app-icon>
-            <h1>TurboPixel</h1>
-        </div>
-        <div class="header-actions liquid-glass" role="group" aria-label="App settings">
-            <button class="icon-button" aria-label="Appearance" title="Appearance" (click)="clickAppearance()"><app-icon name="appearance"></app-icon></button>
-            <button class="icon-button" aria-label="About TurboPixel" title="About TurboPixel" (click)="clickAbout()"><app-icon name="info"></app-icon></button>
-        </div>
+        <button class="icon-button header-appearance" aria-label="Appearance" title="Appearance" (click)="clickAppearance()"><app-icon name="appearance"></app-icon></button>
+        <div class="brand"><h1>#TurboPixel</h1></div>
+        <button class="icon-button header-about" aria-label="About TurboPixel" title="About TurboPixel" (click)="clickAbout()"><app-icon name="info"></app-icon></button>
     </header>
 
     <main class="studio">
@@ -48,5 +43,5 @@
             </div>
         </section>
     </main>
-    <footer class="app-footer"><span>TurboPixel by <a href="https://github.com/turborium/turbopixel" target="_blank" rel="noopener">turborium</a></span><button *ngIf="!install.installed" class="plain-button install-link" (click)="clickInstall()"><app-icon name="download"></app-icon>Install app</button><a [href]="repoLink" target="_blank" rel="noopener">Source <app-icon name="arrow"></app-icon></a></footer>
+    <footer class="app-footer"><span>by <a href="https://github.com/turborium/turbopixel" target="_blank" rel="noopener">turborium</a></span><button *ngIf="!install.installed" class="plain-button install-link" (click)="clickInstall()"><app-icon name="download"></app-icon>Install app</button><a [href]="repoLink" target="_blank" rel="noopener">Source <app-icon name="arrow"></app-icon></a></footer>
 </div>

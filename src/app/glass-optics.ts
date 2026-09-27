@@ -32,27 +32,25 @@ void main(){
   float coverage=1.-smoothstep(-.7,.7,d);
   if(coverage<=0.) discard;
   vec2 n=normalize(vec2(box(p+vec2(.5,0.))-box(p-vec2(.5,0.)),box(p+vec2(0.,.5))-box(p-vec2(0.,.5)))+vec2(.0001));
-  float bevel=min(14.,min(size.x,size.y)*.23);
+  float bevel=min(10.,min(size.x,size.y)*.23);
   float edge=1.-smoothstep(0.,bevel,-d);
   // Curved lens: inward displacement grows toward the edge; separate RGB rays.
-  float bend=sin(edge*1.570796)*16.;
+  float bend=sin(edge*1.570796)*8.;
   vec2 ray=origin+p-n*bend;
-  float dispersion=edge*1.4;
+  float dispersion=edge*.45;
   vec3 color=vec3(scene(ray+n*dispersion).r,scene(ray).g,scene(ray-n*dispersion).b);
   vec3 tint=mix(vec3(.97,.975,.985),vec3(.12,.14,.18),dark);
   // Regular material: protect every label with a stable luminance field.
   // Refraction is confined to the outer bevel, clear of the padded controls.
-  float body=smoothstep(3.,14.,-d);
-  color=mix(color,tint,mix(.40,.93,body));
+  float body=smoothstep(1.,10.,-d);
+  color=mix(color,tint,mix(.72,.992,body));
   if(clearGlass>.5) color=mix(color,vec3(.015,.025,.045),.55);
   vec2 direction=normalize(light-(origin+p)+vec2(.001));
   float facing=dot(n,direction);
   float rim=exp(-abs(d+1.1)*1.1);
-  float inner=exp(-pow((-d-bevel*.63)/3.5,2.));
-  color+=vec3(.85,.92,1.)*pow(max(facing,0.),5.)*rim*.40;
-  color+=vec3(1.,.90,.78)*pow(max(-facing,0.),7.)*rim*.10;
-  color+=vec3(.65,.78,1.)*inner*edge*.035;
-  color-=pow(max(-facing,0.),2.)*edge*.05;
+  color+=vec3(.85,.92,1.)*pow(max(facing,0.),5.)*rim*.15;
+  color+=vec3(1.,.90,.78)*pow(max(-facing,0.),7.)*rim*.04;
+  color-=pow(max(-facing,0.),2.)*edge*.015;
   gl_FragColor=vec4(clamp(color,0.,1.),coverage);
 }`;
 
@@ -88,7 +86,7 @@ export class GlassOptics {
         this.stage.addEventListener('webglcontextrestored', this.restored);
         this.init();
         this.mutations.observe(document.body, { childList: true, subtree: true });
-        this.mutations.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-still', 'data-opaque'] });
+        this.mutations.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-style', 'data-still', 'data-opaque'] });
         this.resize.observe(document.body);
         window.addEventListener('resize', this.request);
         document.addEventListener('scroll', this.request, true);
@@ -131,7 +129,7 @@ export class GlassOptics {
         this.revision = revision; this.source = source; this.dirtyTexture = true; this.invalidate();
     }
     private still() { return document.documentElement.dataset['still'] === 'true' || this.media[1].matches; }
-    private blocked() { return document.documentElement.dataset['opaque'] === 'true' || this.media[0].matches || this.media[2].matches || this.media[3].matches; }
+    private blocked() { return (!!document.documentElement.dataset['style'] && document.documentElement.dataset['style'] !== 'modern') || document.documentElement.dataset['opaque'] === 'true' || this.media[0].matches || this.media[2].matches || this.media[3].matches; }
     private invalidate() {
         if (!this.frame && !this.destroyed && !document.hidden) this.frame = requestAnimationFrame(() => { this.frame = 0; this.render(); });
     }

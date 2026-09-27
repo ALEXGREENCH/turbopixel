@@ -1,3 +1,35 @@
+# Interface audit — 1.6.0
+
+The title is now centered between two equal 44px utility targets. The original
+hashtag identity replaces the extra pixel-grid mark. Classic orange is the
+first-run interface; existing theme and accessibility preferences are preserved.
+Modern, 1984 monochrome, 1995 desktop and terminal styles are separately selectable
+from photo palettes. Styles never alter image processing or export content.
+
+Classic/retro surfaces are solid. Modern defaults to solid too; users can disable
+Reduce transparency for the optical material. Based on the reported double rims
+and visible photo artifacts, its tint is now 99.2% in the center. Refraction is
+limited to a 10px edge, with smaller displacement/dispersion, weaker highlights,
+no inner highlight ring and no overlapping CSS rim. Canvas bounds include the
+host border, avoiding the previous 2px difference in drawn lens dimensions.
+
+The same rendered-pixel contrast test now measures **6.98:1 light** and
+**9.43:1 dark**. Switching the source between black and white changes the central
+RGB channels by at most two 8-bit levels. Tests also cover primary, secondary,
+accent and button text in all five styles and both color themes (minimum 4.5:1).
+Desktop-style utility/status text uses white on its teal page background.
+
+Palette sheets meet the phone bottom safe area and keep search/header sticky.
+Only the handle captures a downward drag; native scrolling and OS edge gestures
+remain available elsewhere. Dialogs and sheets share transient browser-history
+entries, so Back dismisses the top overlay. Ordinary dismissal consumes the same
+entry asynchronously; queued openings wait for that traversal. Forward skips
+expired overlays rather than restoring stale export data. Tests exercise real
+popstate delivery in a browser as well as nested/rapid dismissal cases.
+
+The Apple materials/motion references and real-device limitations below remain
+applicable. These styles are web interpretations, not native Apple rendering.
+
 # Interface audit â€” 1.5.0
 
 ## Problems found in 1.4

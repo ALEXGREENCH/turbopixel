@@ -1,3 +1,4 @@
+import { SheetDrag } from './sheet-drag';
 import { IconComponent } from './icon.component';
 import { AppearanceComponent } from './appearance';
 import { InstallComponent } from './install';
@@ -30,6 +31,7 @@ import { AboutDialogComponent } from './about-dialog/about-dialog.component';
     declarations: [
         AppComponent,
         IconComponent,
+        SheetDrag,
         AppearanceComponent,
         InstallComponent,
         CameraErrorDialogComponent,

@@ -17,6 +17,7 @@
 // Lasciate ogne speranza, voi ch’entrate
 
 import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener, NgZone } from '@angular/core';
+import { OverlayNavigation } from './overlay-navigation';
 import { GlassOptics } from './glass-optics';
 import { AppInstall, InstallComponent } from './install';
 import { Appearance, AppearanceComponent } from './appearance';
@@ -39,7 +40,7 @@ import { iconCharForEffect } from './utils';
     selector: 'bottom-sheet-effects',
     template: `
     <div class="palette-top">
-    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-drag-handle" appSheetDrag (dismiss)="close()" aria-hidden="true"><div class="sheet-grabber"></div></div>
     <header class="sheet-header"><h2 id="palette-title">Palettes <span class="sheet-count">{{data.effects.length}}</span></h2><button class="plain-button sheet-done" (click)="close()">Done</button></header>
     <label class="palette-search"><app-icon name="search"></app-icon><input type="search" placeholder="Find a palette" aria-label="Find a palette" [(ngModel)]="query"></label>
     </div>
@@ -194,15 +195,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     private readonly hangsTime = 1800;
     private optics?: GlassOptics;
 
-    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance, private zone: NgZone, public install: AppInstall) {
+    constructor(private dialog: MatDialog, private bottomSheet: MatBottomSheet, public appearance: Appearance, private zone: NgZone, public install: AppInstall, private navigation: OverlayNavigation) {
 
     }
 
     clickAppearance() {
-        this.dialog.open(AppearanceComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
+        this.navigation.dialog(AppearanceComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
     }
     clickInstall() {
-        this.dialog.open(InstallComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
+        this.navigation.dialog(InstallComponent, { panelClass: 'glass-dialog', width: '420px', maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 32px)' });
     }
 
     @HostListener('pointermove', ['$event'])
@@ -229,7 +230,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     // <effects>
     clickOpenBottomSheetEffect() {
-        this.bottomSheet.open(BottomSheetEffects, {
+        this.navigation.sheet(BottomSheetEffects, {
             panelClass: 'palette-sheet',
             ariaLabel: 'Choose a palette',
             data: {
@@ -260,7 +261,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
         // save dialog
         // https://stackoverflow.com/questions/68094609/ios-15-safari-floating-address-bar
-        const dialogRef = this.dialog.open(SaveDialogComponent, {
+        const dialogRef = this.navigation.dialog(SaveDialogComponent, {
             disableClose: false,
             panelClass: 'glass-dialog',
             width: "460px",
@@ -297,7 +298,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // NOT WORK???
         // https://stackoverflow.com/questions/45928423/get-rid-of-white-space-around-angular-material-modal-dialog
         // about dialog
-        const dialogRef = this.dialog.open(AboutDialogComponent, {
+        const dialogRef = this.navigation.dialog(AboutDialogComponent, {
             disableClose: false,
             panelClass: 'glass-dialog',
             //panelClass: 'app-dialog-container',
@@ -352,7 +353,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         })
         .catch((error) => {
             this.state = State.Error;
-            const dialogRef = this.dialog.open(CameraErrorDialogComponent, {
+            const dialogRef = this.navigation.dialog(CameraErrorDialogComponent, {
                 disableClose: false, panelClass: 'glass-dialog'
             });
 

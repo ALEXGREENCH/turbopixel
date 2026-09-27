@@ -13,12 +13,13 @@ describe('Glass optics', () => {
         const context = source.getContext('2d')!;
         context.fillStyle = '#e04455'; context.fillRect(0,0,64,64);
         context.fillStyle = '#44aaff'; context.fillRect(32,0,32,64);
+        document.documentElement.dataset['style'] = 'modern';
         document.documentElement.dataset['theme'] = 'light';
         document.documentElement.dataset['opaque'] = 'false';
     });
     afterEach(() => {
         optics?.destroy(); optics = undefined; host.remove();
-        delete document.documentElement.dataset['theme']; delete document.documentElement.dataset['opaque'];
+        delete document.documentElement.dataset['style']; delete document.documentElement.dataset['theme']; delete document.documentElement.dataset['opaque'];
     });
     it('compiles the shader, renders a rounded lens, and removes it for opaque mode', async () => {
         const probe = document.createElement('canvas').getContext('webgl');
@@ -50,6 +51,17 @@ describe('Glass optics', () => {
         expect(host.classList.contains('has-optics')).toBeTrue();
         optics.destroy(); optics = undefined;
         expect(host.querySelector('canvas')).toBeNull();
+    });
+    it('keeps the matte center independent of high contrast photo details', async () => {
+        optics = new GlassOptics(source);
+        const samples: number[][] = [];
+        for (const color of ['#000', '#fff']) {
+            source.getContext('2d')!.fillStyle = color; source.getContext('2d')!.fillRect(0,0,64,64);
+            optics.setSource(source); await paint();
+            const lens = host.querySelector('canvas')!;
+            samples.push(Array.from(lens.getContext('2d')!.getImageData(lens.width/2,lens.height/2,1,1).data));
+        }
+        for (let i=0;i<3;i++) expect(Math.abs(samples[0][i]-samples[1][i])).toBeLessThanOrEqual(2);
     });
     it('leaves CSS glass and controls intact when WebGL is unavailable', async () => {
         spyOn(HTMLCanvasElement.prototype, 'getContext').and.returnValue(null);
