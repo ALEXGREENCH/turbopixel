@@ -1,3 +1,16 @@
+# Browser verification - 1.7.1
+
+43 checks pass (10 Node export, 33 ChromeHeadless). The expanded-view regression
+now also checks that the header, source controls, intensity, random effect and
+footer remain visible and that the photo's decorative mount is absent.
+
+At 390x667 in Chromium, the header is 60px high, the photo fills the 375px content
+width (the desktop scrollbar uses the remaining width), and Save ends at 600px.
+Secondary actions remain below and are reachable by scrolling. At 1280x900,
+the complete square frame is 796px high, with the editing controls below it.
+Save opens its existing dialog from full frame. Native Safari/device camera
+acceptance remains outstanding; these measurements use Chromium and the demo.
+
 # Browser verification - 1.7.0
 
 43 automated checks passed: 10 Node export tests and 33 ChromeHeadless checks.

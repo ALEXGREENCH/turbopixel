@@ -284,5 +284,3 @@ button:not(:disabled):active { transform: scale(.975); transition-duration: 100m
 .sheet-drag-handle .sheet-grabber { margin-top: 10px; }
 
 @import 'terminal';
-
-body:has(.preview-expanded) { overflow: hidden; }

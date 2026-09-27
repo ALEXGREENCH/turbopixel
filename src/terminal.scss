@@ -33,7 +33,7 @@ html:root[data-style=terminal] {
  .source-control button:not(.selected)::after { content: ']'; }
  .dock-heading, .intensity-heading, .intensity-heading output, .preview-status, .sheet-count,
  .theme-picker legend, .style-picker legend, .sheet-description, .setting-row small { font-size: 18px; font-weight: 400; }
- .dock-heading { margin: 20px 0 4px; text-transform: uppercase; }
+ .dock-heading { margin: 0 0 4px; text-transform: uppercase; }
  .effect-selector { border-bottom: 1px solid var(--line); padding-bottom: 4px; }
  .effect-selector .icon-button { color: var(--text); }
  .effect-name { justify-content: space-between; font-size: 20px; }
@@ -47,6 +47,8 @@ html:root[data-style=terminal] {
  .intensity-slider::-webkit-slider-thumb { width: 12px; height: 22px; margin-top: -10px; border-radius: 0; background: var(--text); border: 0; box-shadow: none; }
  .intensity-slider::-moz-range-thumb { width: 12px; height: 22px; border-radius: 0; background: var(--text); border: 0; box-shadow: none; }
  .shuffle-button, .dock-actions .icon-button { width: 48px; background: none; border: 1px solid var(--line); }
+ .dock-actions .icon-button { font-size: 20px; }
+ .dock-actions app-icon { display: none; }
  .capture-button, .prominent-button { border: 1px solid var(--text); background: var(--text); color: var(--page-bg); }
  app-icon svg { display: none; }
  app-icon .terminal-glyph { display: inline; white-space: nowrap; font-family: 'IBM 3270', monospace; font-size: inherit; line-height: 1; }

@@ -28,7 +28,7 @@
 .source-control.camera-selected::before { transform: translateX(100%); }
 .source-control button { position: relative; gap: 7px; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 550; }
 .source-control app-icon { width: 19px; height: 19px; }
-.dock-heading { font-size: 12px; color: var(--secondary); font-weight: 500; margin: 24px 4px 6px; }
+.dock-heading { font-size: 12px; color: var(--secondary); font-weight: 500; margin: 0 4px 6px; }
 .effect-selector { display: flex; align-items: center; gap: 2px; }
 .effect-selector .icon-button { flex: 0 0 44px; width: 44px; color: var(--secondary); }
 .effect-selector app-icon { width: 17px; height: 17px; }
@@ -46,9 +46,11 @@
 .intensity-slider:active::-webkit-slider-thumb { transform: scale(1.1); }
 .intensity-slider:active::-moz-range-thumb { transform: scale(1.1); }
 .dock-actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
+.dock-actions .icon-button { flex: 1; gap: 8px; width: auto; font-size: 13px; }
 .shuffle-button { background: var(--inset-fill); width: 48px; height: 48px; }
-.capture-button { flex: 1; min-width: 0; min-height: 48px; font-size: 15px; font-weight: 600; }
+.capture-button { display: flex; width: 100%; margin-top: 8px; flex: 1; min-width: 0; min-height: 48px; font-size: 15px; font-weight: 600; }
 .capture-button app-icon { width: 20px; height: 20px; }
+.secondary-controls .source-control { margin-top: 12px; }
 .import-error { color: var(--error); font-size: 13px; line-height: 1.45; margin: 12px 0 0; }
 .app-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; width: min(1320px, 100%); margin-inline: auto; padding: 0 max(32px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(32px, env(safe-area-inset-left)); color: var(--secondary); font-size: 11px; }
 .app-footer a { color: inherit; text-decoration: none; display: inline-flex; gap: 4px; align-items: center; min-height: 44px; }
@@ -88,28 +90,25 @@
  .intensity-heading, .dock-actions { margin-top: 4px; }
  .app-footer { padding-bottom: env(safe-area-inset-bottom); }
 }
-/* Expanded view remains in the app, including on Safari/PWA without Fullscreen API. */
+/* Full frame is a scrollable layout: the image gets the first screen and
+   secondary controls follow it, without taking space away from the frame. */
 .preview-expanded {
- position: fixed; inset: 0; z-index: 5; height: 100dvh; min-height: 0; background: var(--page-bg);
- .app-header, .app-footer { display: none; }
- .studio { display: flex; flex-direction: column; gap: 4px; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
- .preview-panel { flex: 1; width: 100%; height: auto; min-height: 0; }
- .app-content { flex: 1; height: auto; width: 100%; aspect-ratio: auto; min-height: 0; }
- .preview-status { height: 44px; padding-top: 0; }
- .controls-panel { flex: none; width: min(100%, 560px); max-height: none; overflow: visible; }
- .editing-dock { padding: 8px; }
- .source-control, .dock-heading, .intensity-heading, .intensity-slider, .import-error, .dock-actions .icon-button { display: none; }
- .effect-selector, .dock-actions { margin: 0; }
- .dock-actions { margin-top: 4px; }
- .capture-button { padding-inline: 12px; }
- .capture-button app-icon { display: none; }
- @media (orientation: landscape) and (min-width: 600px) {
-  .studio { display: grid; grid-template-columns: minmax(0,1fr) 240px; gap: 16px; }
-  .preview-panel { height: 100%; }
-  .controls-panel { width: 100%; }
-  .editing-dock { display: block; }
-  .dock-actions { margin-top: 12px; }
- }
+ --expanded-header-height: calc(44px + max(8px, env(safe-area-inset-top)) + 8px);
+ height: auto; min-height: 100dvh; overflow: visible;
+ .app-header { height: var(--expanded-header-height); flex: none; padding-block: max(8px, env(safe-area-inset-top)) 8px; }
+ .studio { flex: none; display: flex; flex-direction: column; gap: 0; padding: 0 env(safe-area-inset-right) 16px env(safe-area-inset-left); }
+ .preview-panel { flex: none; width: 100%; height: auto; }
+ .app-content { flex: none; width: 100%; aspect-ratio: var(--preview-aspect, 1); height: auto; max-height: calc(100dvh - var(--expanded-header-height) - 44px); }
+ .app-content-image { border-radius: 0; box-shadow: none; }
+ .app-content-image::before { display: none; }
+ .preview-status { height: 44px; padding: 0 12px; }
+ .controls-panel { flex: none; width: min(calc(100% - 24px), 560px); max-height: none; overflow: visible; margin-top: 8px; }
+ .editing-dock { padding: 12px; }
+ .dock-heading { display: none; }
+ .effect-selector, .dock-actions { margin-top: 0; }
+ .secondary-controls { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 16px; }
+ .intensity-heading { margin-top: 0; }
+ .app-footer { padding-top: 8px; }
 }
 
 .header-appearance, .header-about { color: var(--header-text, var(--text)); }

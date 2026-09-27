@@ -35,6 +35,10 @@ describe('Photo studio', () => {
         app.togglePreview(); fixture.detectChanges();
         expect(fixture.nativeElement.querySelector('.preview-expanded')).not.toBeNull();
         expect(fixture.nativeElement.querySelector('[aria-label="Exit large preview"]')).not.toBeNull();
+        for (const selector of ['.app-header', '.source-control', '.intensity-slider', '.shuffle-button', '.app-footer']) {
+            expect(getComputedStyle(fixture.nativeElement.querySelector(selector)).display).not.toBe('none');
+        }
+        expect(getComputedStyle(fixture.nativeElement.querySelector('.app-content-image'), '::before').display).toBe('none');
         track.calls.mostRecent().args[0](); fixture.detectChanges();
         expect(app.previewExpanded).toBeFalse();
         expect(app.sourceImage).toBe(photo); expect(app.selectedEffect).toBe(3); expect(app.effectValue).toBe(.37);

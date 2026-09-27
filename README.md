@@ -6,6 +6,14 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 five interface styles and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
+## Changes in 1.7.1
+
+Full frame keeps the app header and removes the photo mount, rounded surround
+and shadow. The photo uses the available width up to the height below the header;
+all controls follow it in normal page scrolling. Palette and Save come first,
+then intensity, source selection, random effect and camera switching. Entering
+full frame starts at the top; exiting restores the previous scroll position.
+
 ## Changes in 1.7.0
 
 - Portrait preview uses the available width; short screens scroll the controls

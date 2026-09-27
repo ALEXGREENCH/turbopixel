@@ -104,18 +104,30 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     readonly State = State;
     previewExpanded = false;
     private previewClosed?: Subject<void>;
+    private previewScrollTop = 0;
+    private previewScrollFrame?: number;
 
     togglePreview() {
         if (this.previewExpanded) { this.closePreview(); return; }
+        this.previewScrollTop = window.scrollY;
         this.previewExpanded = true;
         this.previewClosed = new Subject<void>();
         this.navigation.track(() => this.closePreview(), this.previewClosed);
+        this.scrollAfterLayout(0);
     }
     private closePreview() {
         this.previewExpanded = false;
         const closed = this.previewClosed;
         this.previewClosed = undefined;
         closed?.next(); closed?.complete();
+        this.scrollAfterLayout(this.previewScrollTop);
+    }
+    private scrollAfterLayout(top: number) {
+        if (this.previewScrollFrame !== undefined) cancelAnimationFrame(this.previewScrollFrame);
+        this.previewScrollFrame = requestAnimationFrame(() => {
+            this.previewScrollFrame = undefined;
+            window.scrollTo(0, top);
+        });
     }
     @HostListener('document:keydown.escape', ['$event'])
     escapePreview(event: KeyboardEvent) {
@@ -537,6 +549,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        if (this.previewScrollFrame !== undefined) cancelAnimationFrame(this.previewScrollFrame);
         this.previewClosed?.complete();
         this.previewAnimation?.cancel();
         this.optics?.destroy();

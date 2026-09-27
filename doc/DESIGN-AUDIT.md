@@ -1,3 +1,16 @@
+# Full-frame revision - 1.7.1
+
+Full frame now uses ordinary document scrolling, retaining the header and footer.
+The decorative image mount and shadow are removed. Portrait frames fill the
+available content width; wider screens limit the frame to viewport height minus
+the compact header and 44px status/exit row. Frame fitting preserves its aspect
+ratio and watermark. Controls below the image no longer reduce that area.
+
+Palette and Save lead the controls in both visual and keyboard order. Intensity,
+photo/camera selection, random choice and camera switching follow, with no
+functional controls hidden. Entry scrolls to the header after layout; exit
+restores the prior scroll position. Pending scroll work is cancelled on teardown.
+
 # Preview layout - 1.7.0
 
 The old mobile height calculation reserved 476 CSS pixels for the interface

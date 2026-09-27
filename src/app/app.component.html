@@ -22,23 +22,27 @@
         <section class="controls-panel" aria-label="Photo controls">
             <input #photoInput type="file" accept="image/*" hidden (change)="loadPhoto($event)">
             <div class="editing-dock liquid-glass">
-            <div class="source-control" role="group" aria-label="Photo source" [class.camera-selected]="!sourceImage">
-                <button class="plain-button" aria-label="Open photo" [class.selected]="!!sourceImage" [attr.aria-pressed]="!!sourceImage" [disabled]="state == State.Init" (click)="photoInput.click()"><app-icon name="photo"></app-icon>Open photo</button>
-                <button class="plain-button" aria-label="Camera" [class.selected]="!sourceImage" [attr.aria-pressed]="!sourceImage" [disabled]="state == State.Init" (click)="startCamera()"><app-icon name="camera"></app-icon>Camera</button>
-            </div>
-            <p *ngIf="importError" class="import-error" role="alert">{{importError}}</p>
                 <div class="dock-heading"><span>Palette</span></div>
-                <div class="effect-selector">
-                    <button class="icon-button" aria-label="Previous effect" [disabled]="state != State.Work" (click)="clickBeforeEffect()"><app-icon name="left"></app-icon></button>
-                    <button class="plain-button effect-name" [disabled]="state != State.Work" (click)="clickOpenBottomSheetEffect()" aria-haspopup="dialog"><span>{{effects[selectedEffect].title}}</span><app-icon name="down"></app-icon></button>
-                    <button class="icon-button" aria-label="Next effect" [disabled]="state != State.Work" (click)="clickNextEffect()"><app-icon name="right"></app-icon></button>
-                </div>
-                <div class="intensity-heading"><label for="intensity">Intensity</label><output for="intensity">{{(effectValue * 100).toFixed(0)}}%</output></div>
-                <input id="intensity" class="intensity-slider" type="range" min="0" max="1" step="0.00625" [(ngModel)]="effectValue" [style.--range-fill]="(effectValue * 100) + '%'" [disabled]="state != State.Work">
-                <div class="dock-actions">
-                    <button class="icon-button shuffle-button" aria-label="Random effect" title="Random effect" [disabled]="state != State.Work" (click)="clickRandom()"><app-icon name="shuffle"></app-icon></button>
-                    <button class="icon-button" aria-label="Switch camera" *ngIf="!sourceImage" [disabled]="state != State.Work" (click)="clickNextCamera()"><app-icon name="flip"></app-icon></button>
+                <div class="primary-controls">
+                    <div class="effect-selector">
+                        <button class="icon-button" aria-label="Previous effect" [disabled]="state != State.Work" (click)="clickBeforeEffect()"><app-icon name="left"></app-icon></button>
+                        <button class="plain-button effect-name" [disabled]="state != State.Work" (click)="clickOpenBottomSheetEffect()" aria-haspopup="dialog"><span>{{effects[selectedEffect].title}}</span><app-icon name="down"></app-icon></button>
+                        <button class="icon-button" aria-label="Next effect" [disabled]="state != State.Work" (click)="clickNextEffect()"><app-icon name="right"></app-icon></button>
+                    </div>
                     <button class="capture-button prominent-button" [disabled]="state != State.Work || !hasFrame" (click)="clickTakePhoto()"><app-icon name="share"></app-icon>Save photo</button>
+                </div>
+                <div class="secondary-controls">
+                    <div class="intensity-heading"><label for="intensity">Intensity</label><output for="intensity">{{(effectValue * 100).toFixed(0)}}%</output></div>
+                    <input id="intensity" class="intensity-slider" type="range" min="0" max="1" step="0.00625" [(ngModel)]="effectValue" [style.--range-fill]="(effectValue * 100) + '%'" [disabled]="state != State.Work">
+                    <div class="source-control" role="group" aria-label="Photo source" [class.camera-selected]="!sourceImage">
+                        <button class="plain-button" aria-label="Open photo" [class.selected]="!!sourceImage" [attr.aria-pressed]="!!sourceImage" [disabled]="state == State.Init" (click)="photoInput.click()"><app-icon name="photo"></app-icon>Open photo</button>
+                        <button class="plain-button" aria-label="Camera" [class.selected]="!sourceImage" [attr.aria-pressed]="!sourceImage" [disabled]="state == State.Init" (click)="startCamera()"><app-icon name="camera"></app-icon>Camera</button>
+                    </div>
+                    <p *ngIf="importError" class="import-error" role="alert">{{importError}}</p>
+                    <div class="dock-actions">
+                        <button class="icon-button shuffle-button" aria-label="Random effect" title="Random effect" [disabled]="state != State.Work" (click)="clickRandom()"><app-icon name="shuffle"></app-icon><span>Random</span></button>
+                        <button class="icon-button" aria-label="Switch camera" *ngIf="!sourceImage" [disabled]="state != State.Work" (click)="clickNextCamera()"><app-icon name="flip"></app-icon><span>Flip</span></button>
+                    </div>
                 </div>
             </div>
         </section>
