@@ -1,4 +1,4 @@
-<div class="app-container">
+<div class="app-container" [class.preview-expanded]="previewExpanded">
     <div class="ambient-field" aria-hidden="true"><canvas #ambient></canvas></div>
     <header class="app-header">
         <button class="icon-button header-appearance" aria-label="Appearance" title="Appearance" (click)="clickAppearance()"><app-icon name="appearance"></app-icon></button>
@@ -8,7 +8,7 @@
 
     <main class="studio">
         <section class="preview-panel" aria-label="Photo preview">
-            <div class="app-content"><div #contentwrapper class="app-content-wrapper">
+            <div class="app-content" [style.--preview-aspect]="effects[selectedEffect].width / effects[selectedEffect].height"><div #contentwrapper class="app-content-wrapper">
                 <div #image class="app-content-image">
                     <video #video class="app-content-video" playsinline muted aria-hidden="true"></video>
                     <canvas #canvas class="app-content-canvas" role="img" aria-label="Preview of your photo with the selected pixel effect"></canvas>
@@ -16,7 +16,7 @@
                     <mat-spinner diameter="32" class="app-content-spinner" *ngIf="state == State.Init"></mat-spinner>
                 </div>
             </div></div>
-            <div class="preview-status"><span class="source-status"><i [class.live]="!sourceImage && state === State.Work"></i>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : state === State.Error ? 'Camera unavailable' : state === State.Init ? 'Opening camera' : state === State.Work ? 'Live camera' : 'Camera paused'}}</span><span>{{selectedEffect + 1}} / {{effects.length}}</span></div>
+            <div class="preview-status"><span class="source-status"><i [class.live]="!sourceImage && state === State.Work"></i>{{sourceLabel === 'DEMO PHOTO' ? 'Demo' : sourceLabel === 'YOUR PHOTO' ? 'Photo' : state === State.Error ? 'Camera unavailable' : state === State.Init ? 'Opening camera' : state === State.Work ? 'Live camera' : 'Camera paused'}}</span><span>{{selectedEffect + 1}} / {{effects.length}}</span><button class="icon-button preview-toggle" [attr.aria-label]="previewExpanded ? 'Exit large preview' : 'Expand preview'" [attr.title]="previewExpanded ? 'Exit large preview' : 'Expand preview'" [attr.aria-pressed]="previewExpanded" (click)="togglePreview()"><app-icon [name]="previewExpanded ? 'collapse' : 'expand'"></app-icon></button></div>
         </section>
 
         <section class="controls-panel" aria-label="Photo controls">

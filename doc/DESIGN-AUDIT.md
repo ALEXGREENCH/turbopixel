@@ -1,3 +1,18 @@
+# Preview layout - 1.7.0
+
+The old mobile height calculation reserved 476 CSS pixels for the interface
+(452 in Terminal), leaving a small camera frame on short screens. Portrait
+layout now derives preview height from available width and effect aspect ratio.
+Controls remain below the photo and can scroll on short screens. Desktop and
+landscape layouts allocate the remaining viewport height to the preview, with
+controls alongside it.
+
+Large preview keeps the existing canvas and camera stream. It reduces the
+interface to palette selection, Save and an exit button; Back and Escape also
+exit. Dialogs keep their own navigation entry above the preview. This mode uses
+normal page layout rather than depending on the browser Fullscreen API. No
+controls cover the image or its watermark. All settings return on exit.
+
 # Terminal revision — 1.6.1
 
 The previous green Courier treatment was replaced with a specific IBM 3270

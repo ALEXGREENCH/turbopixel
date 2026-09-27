@@ -1,3 +1,24 @@
+# Browser verification - 1.7.0
+
+43 automated checks passed: 10 Node export tests and 33 ChromeHeadless checks.
+New tests cover expanding the same canvas without losing the photo or settings,
+closing via the navigation callback, and letting an open dialog consume Escape.
+Existing real-browser History/PopState integration tests cover nested entries.
+
+Manual Chromium checks cover Classic, Modern and Terminal, 320x700 and 390x844
+portrait, a short 390x667 viewport, 844x390 landscape and 1280x900 desktop.
+No horizontal overflow was observed. On the short portrait viewport, Terminal's
+square preview increased from a calculated 215px to a measured 359px per side
+(374px in large preview, without the desktop scrollbar). At 1280x900 the frame
+measures 710px normally and 840px in large preview. At 844x390, large preview
+provides a 330px frame with Save and palette controls beside it.
+
+Palette selection and Save remain available in large preview. Escape closes
+Save first and leaves large preview open; a second Escape restores the editor.
+The complete watermark remains visible. Native Safari camera capture and device
+Back gestures still require real-device acceptance; the workstation checks use
+the demo image and Chromium.
+
 # Browser verification — 1.6.0
 
 40 checks: 10 Node export tests and 30 ChromeHeadless checks. New coverage includes

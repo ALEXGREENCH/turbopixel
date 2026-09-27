@@ -80,8 +80,6 @@ html:root[data-style=terminal] {
  :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
  @media (hover: hover) { .plain-button:hover:not(:disabled), .icon-button:hover:not(:disabled) { background: var(--selected-fill); } }
  @media (max-width: 700px) {
-  .studio { padding-inline: max(20px, env(safe-area-inset-left)); gap: 12px; }
-  .app-content { height: clamp(180px, calc(100dvh - 452px), 510px); }
   .brand h1 { font-size: 22px; }
   .editing-dock { padding: 12px 0; }
   .dock-heading { display: none; }

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AppModule } from './app.module';
-import { OVERLAY_WINDOW } from './overlay-navigation';
+import { OVERLAY_WINDOW, OverlayNavigation } from './overlay-navigation';
 import { AppComponent } from './app.component';
 
 describe('Photo studio', () => {
@@ -23,6 +23,33 @@ describe('Photo studio', () => {
         expect(app.selectedEffect).toBe(app.effects.length - 1);
         app.clickNextEffect();
         expect(app.selectedEffect).toBe(0);
+        fixture.destroy();
+    });
+    it('expands the existing preview and returns through Back without losing the photo or settings', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.componentInstance;
+        spyOn(app, 'ngAfterViewInit'); fixture.detectChanges();
+        const track = spyOn(TestBed.inject(OverlayNavigation), 'track');
+        const photo = new Image(); app.sourceImage = photo; app.selectedEffect = 3; app.effectValue = .37;
+        const canvas = app.canvas.nativeElement;
+        app.togglePreview(); fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('.preview-expanded')).not.toBeNull();
+        expect(fixture.nativeElement.querySelector('[aria-label="Exit large preview"]')).not.toBeNull();
+        track.calls.mostRecent().args[0](); fixture.detectChanges();
+        expect(app.previewExpanded).toBeFalse();
+        expect(app.sourceImage).toBe(photo); expect(app.selectedEffect).toBe(3); expect(app.effectValue).toBe(.37);
+        expect(app.canvas.nativeElement).toBe(canvas); fixture.destroy();
+    });
+    it('lets an open dialog consume Escape before leaving large preview', () => {
+        const fixture = TestBed.createComponent(AppComponent); const app = fixture.componentInstance;
+        spyOn(TestBed.inject(OverlayNavigation), 'track');
+        app.togglePreview();
+        const container = document.createElement('div'); container.className = 'cdk-overlay-container';
+        const dialog = document.createElement('div'); dialog.setAttribute('role', 'dialog');
+        container.appendChild(dialog); document.body.appendChild(container);
+        try { app.escapePreview(new KeyboardEvent('keydown', { key: 'Escape' })); expect(app.previewExpanded).toBeTrue(); }
+        finally { container.remove(); }
+        app.escapePreview(new KeyboardEvent('keydown', { key: 'Escape' })); expect(app.previewExpanded).toBeFalse();
         fixture.destroy();
     });
     it('crossfades palette changes without putting the transition into image data', () => {

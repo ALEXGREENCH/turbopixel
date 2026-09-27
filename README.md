@@ -6,6 +6,16 @@ A fork of turborium's TurboPixel pixel-art camera, with the original 69 effects,
 five interface styles and a rebuilt PNG export flow. Original authorship,
 watermark, source history and license notices are retained.
 
+## Changes in 1.7.0
+
+- Portrait preview uses the available width; short screens scroll the controls
+  below the photo instead of shrinking the frame to fit them.
+- Desktop and landscape layouts use the remaining viewport height, with controls
+  beside the image. The complete frame and watermark stay visible.
+- Expand preview keeps palette selection and Save available while hiding the
+  other controls. Exit with the same button, Back or Escape. The camera, photo
+  and effect settings remain in place. Terminal labels this action `FULL`.
+
 ## Changes in 1.6.1
 
 Terminal now uses the locally bundled **3270font**, a documented reconstruction

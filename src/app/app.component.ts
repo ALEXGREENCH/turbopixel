@@ -17,6 +17,7 @@
 // Lasciate ogne speranza, voi ch’entrate
 
 import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, HostListener, NgZone } from '@angular/core';
+import { Subject } from 'rxjs';
 import { OverlayNavigation } from './overlay-navigation';
 import { GlassOptics } from './glass-optics';
 import { AppInstall, InstallComponent } from './install';
@@ -101,6 +102,34 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     @ViewChild('contentwrapper') contentwrapper!: ElementRef<HTMLElement>;
 
     readonly State = State;
+    previewExpanded = false;
+    private previewClosed?: Subject<void>;
+
+    togglePreview() {
+        if (this.previewExpanded) { this.closePreview(); return; }
+        this.previewExpanded = true;
+        this.previewClosed = new Subject<void>();
+        this.navigation.track(() => this.closePreview(), this.previewClosed);
+    }
+    private closePreview() {
+        this.previewExpanded = false;
+        const closed = this.previewClosed;
+        this.previewClosed = undefined;
+        closed?.next(); closed?.complete();
+    }
+    @HostListener('document:keydown.escape', ['$event'])
+    escapePreview(event: KeyboardEvent) {
+        if (!this.previewExpanded || document.querySelector('.cdk-overlay-container [role="dialog"]')) return;
+        event.preventDefault(); this.closePreview();
+    }
+    private fitPreview() {
+        const wrapper = this.contentwrapper?.nativeElement;
+        const image = this.image?.nativeElement;
+        if (!wrapper || !image) return;
+        const aspect = this.effects[this.selectedEffect].width / this.effects[this.selectedEffect].height;
+        const width = Math.min(wrapper.clientWidth, wrapper.clientHeight * aspect);
+        image.style.width = width + 'px'; image.style.height = width / aspect + 'px';
+    }
 
     // title of application
     title: string = 'TurboPixel';
@@ -393,6 +422,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         }
         this.hasFrame = false;
         this.selectedEffect = effectIndex;
+        this.fitPreview();
         this.effectValue = value;
         if (this.state === State.Work) this.updateFrame();
         if (animate) this.previewAnimation = overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'cubic-bezier(.2,.65,.3,1)' });
@@ -487,12 +517,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.zone.runOutsideAngular(() => this.optics = new GlassOptics(this.canvas.nativeElement));
         document.addEventListener('visibilitychange', this.onVisibilityChange);
 
-        this.contentwrapperResizeObserver = new ResizeObserver((entries) => {
-            const aspect = this.effects[this.selectedEffect].width / this.effects[this.selectedEffect].height;
-            const width = Math.min(entries[0].contentRect.width, entries[0].contentRect.height * aspect);
-            this.image.nativeElement.style.width = width + 'px';
-            this.image.nativeElement.style.height = width / aspect + 'px';
-        });
+        this.contentwrapperResizeObserver = new ResizeObserver(() => this.fitPreview());
         this.contentwrapperResizeObserver.observe(this.contentwrapper.nativeElement);
 
         // calc max effect size
@@ -512,6 +537,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.previewClosed?.complete();
         this.previewAnimation?.cancel();
         this.optics?.destroy();
         document.removeEventListener('visibilitychange', this.onVisibilityChange);
